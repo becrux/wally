@@ -26,13 +26,13 @@ SOURCES += \
   main.cpp \
   engine.cpp \
   application.cpp \
-    trayicon.cpp \
-    settingswindow.cpp \
-    engines/flickr.cpp
+  trayicon.cpp \
+  settingswindow.cpp \
+  engines/flickr.cpp
 
 HEADERS += \
   engine.hpp \
   application.hpp \
-    trayicon.hpp \
-    settingswindow.hpp \
-    engines/flickr.hpp
+  trayicon.hpp \
+  settingswindow.hpp \
+  engines/flickr.hpp
