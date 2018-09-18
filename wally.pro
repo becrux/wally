@@ -22,17 +22,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 QMAKE_CXXFLAGS += -std=c++14 -Wall -Wextra -pedantic
 
+INCLUDEPATH += src
+
 SOURCES += \
-  main.cpp \
-  engine.cpp \
-  application.cpp \
-  trayicon.cpp \
-  settingswindow.cpp \
-  engines/flickr.cpp
+  src/main.cpp \
+  src/engine.cpp \
+  src/application.cpp \
+  src/trayicon.cpp \
+  src/settingswindow.cpp \
+  src/engines/flickr.cpp
 
 HEADERS += \
-  engine.hpp \
-  application.hpp \
-  trayicon.hpp \
-  settingswindow.hpp \
-  engines/flickr.hpp
+  src/engine.hpp \
+  src/application.hpp \
+  src/trayicon.hpp \
+  src/settingswindow.hpp \
+  src/engines/flickr.hpp
