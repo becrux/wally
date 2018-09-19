@@ -20,6 +20,8 @@
 #include "trayicon.hpp"
 
 #include "engines/flickr.hpp"
+#include "engines/ipernity.hpp"
+#include "engines/deviantart.hpp"
 
 #include <QSystemTrayIcon>
 
@@ -29,7 +31,11 @@ Application::Application(int &argc, char **argv) :
   QApplication(argc, argv),
   _trayIcon(new TrayIcon(this))
 {
-  _engines << new Engines::Flickr::Engine(this);
+  _engines << new Engines::Flickr::Engine(this)
+    << new Engines::Ipernity::Engine(this)
+    << new Engines::DeviantArt::Engine(this);
 
-  QMetaObject::invokeMethod(_engines.at(0), "selectNext", Qt::QueuedConnection);
+  QMetaObject::invokeMethod(_engines.at(2), "selectNext", Qt::QueuedConnection);
+
+  // TODO: Imgur https://apidocs.imgur.com/
 }

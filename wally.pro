@@ -30,11 +30,15 @@ SOURCES += \
   src/application.cpp \
   src/trayicon.cpp \
   src/settingswindow.cpp \
-  src/engines/flickr.cpp
+  src/engines/flickr.cpp \
+    src/engines/ipernity.cpp \
+    src/engines/deviantart.cpp
 
 HEADERS += \
   src/engine.hpp \
   src/application.hpp \
   src/trayicon.hpp \
   src/settingswindow.hpp \
-  src/engines/flickr.hpp
+  src/engines/flickr.hpp \
+    src/engines/ipernity.hpp \
+    src/engines/deviantart.hpp
