@@ -37,6 +37,11 @@ Engine::Engine(QObject *parent) :
 
 }
 
+QString Engine::name() const
+{
+  return "Ipernity";
+}
+
 void Engine::selectNext()
 {
   QUrlQuery urlQuery;

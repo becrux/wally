@@ -16,13 +16,16 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "application.hpp"
 #include "engines/flickr.hpp"
 
 #include <QByteArray>
 #include <QFile>
+#include <QFileInfo>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QSettings>
 #include <QUrlQuery>
 #include <QXmlStreamReader>
 
@@ -32,46 +35,86 @@ using namespace Wally::Engines::Flickr;
 
 Engine::Engine(QObject *parent) :
   ::Wally::Engines::Base(parent),
+  _currentItem(0),
   _networkAccessManager(new QNetworkAccessManager(this))
 {
+  QSettings &s = Application::storage();
 
+  SettingsGroupScope sgs(s, name());
+
+  _currentItem = s.value("currentItem").toInt();
+
+  SettingsReadArrayScope sras(s, "items");
+
+  for (int i = 0; i < sras.size(); ++i)
+  {
+    Item item;
+
+    s.setArrayIndex(i);
+    item.tags = s.value("tags").toStringList();
+    item.text = s.value("text").toString();
+    item.tagsCondition = static_cast< Item::TagsCondition >(s.value("tagsCondition").toInt());
+    item.searchOrder = static_cast< Item::SearchOrder >(s.value("searchOrder").toInt());
+    item.currentPage = s.value("currentPage").toInt();
+    item.pagesCount = s.value("pagesCount").toInt();
+
+    _items.append(item);
+  }
+}
+
+QString Engine::name() const
+{
+  return "Flickr";
 }
 
 void Engine::selectNext()
 {
+  static const char * const so[Item::SearchOrderSize] =
+    {
+      "date-posted-asc",
+      "date-posted-desc",
+      "date-taken-asc",
+      "date-taken-desc",
+      "interestingness-asc",
+      "interestingness-desc",
+      "relevance"
+    };
+
+  static const char * const tc[Item::TagsConditionSize] =
+    {
+      "all",
+      "any"
+    };
+
   QUrlQuery urlQuery;
+
+  _currentItem = (_currentItem + 1) % _items.size();
+  Item item = _items.at(_currentItem);
 
   urlQuery.addQueryItem("method", "flickr.photos.search");
   urlQuery.addQueryItem("api_key", FLICKR_API_KEY);
 
-  urlQuery.addQueryItem("tags", (QStringList() << "nature").join(","));
-  // urlQuery.addQueryItem("tag_mode", (_tagsCondition == And)? "all" : "any");
-  urlQuery.addQueryItem("tag_mode", "all");
-  /*
-  else if (!_text.isEmpty())
+  if (!item.tags.isEmpty())
   {
-    QString newText = _text;
-
-    newText.replace(" ","+");
-    url.addQueryItem("text",newText);
+    urlQuery.addQueryItem("tags", item.tags.join(","));
+    urlQuery.addQueryItem("tag_mode", tc[item.tagsCondition]);
+  }
+  else if (!item.text.isEmpty())
+  {
+    item.text.replace(" ", "+");
+    urlQuery.addQueryItem("text", item.text);
   }
   else
-    return QUrl();
-  */
+  {
+    emit failed();
+    return;
+  }
 
-  urlQuery.addQueryItem("media","photos");
-  /*
-  const QString searchOrderStrings[] = { "date-posted-asc", "date-posted-desc",
-                                         "date-taken-asc", "date-taken-desc",
-                                         "interestingness-asc", "interestingness-desc",
-                                         "relevance" };
-  */
-
+  urlQuery.addQueryItem("media", "photos");
   urlQuery.addQueryItem("sort", "relevance");
-  urlQuery.addQueryItem("per_page","1");
+  urlQuery.addQueryItem("per_page", "1");
 
-  // url.addQueryItem("page",QString::number(pageIndex()));
-  urlQuery.addQueryItem("page", "1");
+  urlQuery.addQueryItem("page", QString::number(item.currentPage));
 
   QUrl url("https://api.flickr.com/services/rest");
   url.setQuery(urlQuery);
@@ -101,12 +144,7 @@ void Engine::processSearchResult()
       if (!xmlResp.name().toString().compare("rsp", Qt::CaseInsensitive))
         respOk = !xmlResp.attributes().value("stat").toString().compare("ok", Qt::CaseInsensitive);
       else if (!xmlResp.name().toString().compare("photos", Qt::CaseInsensitive))
-      {
-        /*
-        newPagesCount = qMin(xmlResp.attributes().value("total").toString().toInt(),
-                             FLICKR_PAGES_HARD_LIMIT);
-        */
-      }
+        _items[_currentItem].pagesCount = xmlResp.attributes().value("total").toInt();
       else if (!xmlResp.name().toString().compare("photo", Qt::CaseInsensitive) &&
                (xmlResp.attributes().value("ispublic").toString() == "1"))
         photoId = xmlResp.attributes().value("id").toString();
@@ -156,10 +194,12 @@ void Engine::processSizeQueryResult()
         respOk = !xmlResp.attributes().value("stat").toString().compare("ok", Qt::CaseInsensitive);
       else if (!xmlResp.name().toString().compare("size", Qt::CaseInsensitive))
       {
-        if ((xmlResp.attributes().value("height").toInt() *
-             xmlResp.attributes().value("width").toInt()) > currentArea)
+        int height = xmlResp.attributes().value("height").toInt();
+        int width = xmlResp.attributes().value("width").toInt();
+
+        if ((height * width) > currentArea)
         {
-          currentArea = xmlResp.attributes().value("height").toInt() * xmlResp.attributes().value("width").toInt();
+          currentArea = height * width;
           photoUrl.setUrl(xmlResp.attributes().value("source").toString());
         }
       }
@@ -187,14 +227,18 @@ void Engine::savePhoto()
     return;
   }
 
-  QFile f("/tmp/test.jpg");
-  if (!f.open(QIODevice::WriteOnly))
-  {
-    emit failed();
-    return;
-  }
+  QFileInfo outputFile(Application::dataDir(), networkReply->url().fileName());
 
-  f.write(networkReply->readAll());
+  {
+    QFile f(outputFile.absoluteFilePath());
+    if (!f.open(QIODevice::WriteOnly))
+    {
+      emit failed();
+      return;
+    }
+
+    f.write(networkReply->readAll());
+  }
 
   QUrlQuery urlQuery;
   urlQuery.addQueryItem("method", "flickr.photos.getInfo");
@@ -205,13 +249,15 @@ void Engine::savePhoto()
   url.setQuery(urlQuery);
 
   QNetworkReply *nextNetworkReply = _networkAccessManager->get(QNetworkRequest(url));
-  nextNetworkReply->setProperty("outputFileName", "/tmp/test.jpg");
+  nextNetworkReply->setProperty("outputFileName", outputFile.absoluteFilePath());
   connect(nextNetworkReply, SIGNAL(finished()), this, SLOT(processPhotoInfo()));
 }
 
 void Engine::processPhotoInfo()
 {
   sender()->deleteLater();
+
+  QVariantMap info;
 
   QNetworkReply *networkReply = qobject_cast< QNetworkReply * >(sender());
   if (networkReply && (networkReply->error() == QNetworkReply::NoError))
@@ -228,32 +274,38 @@ void Engine::processPhotoInfo()
         else if (!xmlResp.name().toString().compare("title", Qt::CaseInsensitive))
         {
           xmlResp.readNext();
-          // info.title = xmlResp.text().toString();
+          info[TITLE] = xmlResp.text().toString();
         }
         else if (!xmlResp.name().toString().compare("description", Qt::CaseInsensitive))
         {
           xmlResp.readNext();
-          // info.description = xmlResp.text().toString();
+          info[DESCRIPTION] = xmlResp.text().toString();
         }
         else if (!xmlResp.name().toString().compare("owner", Qt::CaseInsensitive))
         {
-          /*
-          info.owner = xmlResp.attributes().value("realname").toString();
-          if (info.owner.isEmpty())
-            info.owner = xmlResp.attributes().value("username").toString();
-          info.location = xmlResp.attributes().value("location").toString();
-          */
+          QString s = xmlResp.attributes().value("realname").toString();
+
+          if (s.isEmpty())
+            s = xmlResp.attributes().value("username").toString();
+
+          info[AUTHOR] = s;
+          info[LOCATION] = xmlResp.attributes().value("location").toString();
         }
         else if (!xmlResp.name().toString().compare("url", Qt::CaseInsensitive) &&
                  !xmlResp.attributes().value("type").toString().compare("photopage", Qt::CaseInsensitive))
         {
           xmlResp.readNext();
-          // info.sourceUrl = xmlResp.text().toString();
+          info[URL] = xmlResp.text().toString();
         }
       }
   }
 
-  emit pictureAvailable(QFileInfo(networkReply->property("outputFileName").toString()));
+  emit pictureAvailable(QFileInfo(networkReply->property("outputFileName").toString()), info);
+}
+
+void Engine::updateStorage()
+{
+
 }
 
 ::Wally::Engines::SettingsWidget *Engine::settingsWidget(QWidget *parent)

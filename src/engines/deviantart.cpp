@@ -37,6 +37,11 @@ Engine::Engine(QObject *parent) :
 
 }
 
+QString Engine::name() const
+{
+  return "DeviantArt";
+}
+
 void Engine::selectNext()
 {
   QUrlQuery urlQuery;

@@ -31,10 +31,41 @@ namespace Wally
   {
     namespace Flickr
     {
+      struct Item
+      {
+        enum TagsCondition
+        {
+          And = 0,
+          Or = 1,
+          TagsConditionSize = 2
+        };
+
+        enum SearchOrder
+        {
+          DatePostedAsc = 0,
+          DatePostedDesc = 1,
+          DateTakenAsc = 2,
+          DateTakenDesc = 3,
+          InterestingnessAsc = 4,
+          InterestingnessDesc = 5,
+          Relevance = 6,
+          SearchOrderSize = 7
+        };
+
+        TagsCondition tagsCondition;
+        SearchOrder searchOrder;
+        QStringList tags;
+        QString text;
+        int currentPage;
+        int pagesCount;
+      };
+
       class Engine : public ::Wally::Engines::Base
       {
         Q_OBJECT
 
+        int _currentItem;
+        QList< Item > _items;
         QNetworkAccessManager *_networkAccessManager;
 
       private slots:
@@ -42,9 +73,12 @@ namespace Wally
         void processSizeQueryResult();
         void savePhoto();
         void processPhotoInfo();
+        void updateStorage();
 
       public:
         explicit Engine(QObject *parent = nullptr);
+
+        QString name() const override;
 
         ::Wally::Engines::SettingsWidget *settingsWidget(QWidget *parent) override;
 

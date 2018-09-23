@@ -44,6 +44,8 @@ namespace Wally
       public:
         explicit Engine(QObject *parent = nullptr);
 
+        QString name() const override;
+
         ::Wally::Engines::SettingsWidget *settingsWidget(QWidget *parent) override;
 
       public slots:

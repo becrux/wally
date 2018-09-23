@@ -20,6 +20,9 @@
 #define WALLY_APPLICATION_HPP
 
 #include <QApplication>
+#include <QDir>
+
+class QSettings;
 
 namespace Wally
 {
@@ -30,15 +33,60 @@ namespace Wally
     class Base;
   }
 
+  class SettingsGroupScope
+  {
+    QSettings &_settings;
+
+  public:
+    explicit SettingsGroupScope(QSettings &settings, const QString &scope);
+    ~SettingsGroupScope();
+  };
+
+  class SettingsArrayScope
+  {
+    QSettings &_settings;
+
+  protected:
+    explicit SettingsArrayScope(QSettings &settings);
+
+  public:
+    ~SettingsArrayScope();
+  };
+
+  class SettingsReadArrayScope : public SettingsArrayScope
+  {
+    int _size;
+
+  public:
+    explicit SettingsReadArrayScope(QSettings &settings, const QString &arrayName);
+
+    int size() const;
+  };
+
+  class SettingsWriteArrayScope : public SettingsArrayScope
+  {
+  public:
+    explicit SettingsWriteArrayScope(QSettings &settings, const QString &arrayName, int size);
+  };
+
   class Application : public QApplication
   {
     Q_OBJECT
 
+    static Application *_app;
+
+    QSettings *_settings;
     TrayIcon *_trayIcon;
     QList< Engines::Base * > _engines;
 
+    static QDir createDataDir();
+
   public:
     explicit Application(int &argc, char **argv);
+
+    static QDir dataDir();
+
+    static QSettings &storage();
   };
 } // namespace Wally
 

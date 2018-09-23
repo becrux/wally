@@ -23,14 +23,21 @@
 #include "engines/ipernity.hpp"
 #include "engines/deviantart.hpp"
 
+#include <QFileInfo>
+#include <QSettings>
 #include <QSystemTrayIcon>
 
 using namespace Wally;
 
+Application *Application::_app = nullptr;
+
 Application::Application(int &argc, char **argv) :
   QApplication(argc, argv),
+  _settings(new QSettings(QSettings::IniFormat, QSettings::UserScope, "BeCrux", "Wally", this)),
   _trayIcon(new TrayIcon(this))
 {
+  _app = this;
+
   _engines << new Engines::Flickr::Engine(this)
     << new Engines::Ipernity::Engine(this)
     << new Engines::DeviantArt::Engine(this);
@@ -38,4 +45,63 @@ Application::Application(int &argc, char **argv) :
   QMetaObject::invokeMethod(_engines.at(2), "selectNext", Qt::QueuedConnection);
 
   // TODO: Imgur https://apidocs.imgur.com/
+}
+
+QDir Application::dataDir()
+{
+  static QDir dataDir = createDataDir();
+
+  return dataDir;
+}
+
+QDir Application::createDataDir()
+{
+  QDir::home().mkpath(".wally");
+
+  return QFileInfo(QDir::home(), ".wally").absoluteFilePath();
+}
+
+QSettings &Application::storage()
+{
+  return *(_app->_settings);
+}
+
+SettingsGroupScope::SettingsGroupScope(QSettings &settings, const QString &scope) :
+  _settings(settings)
+{
+  _settings.beginGroup(scope);
+}
+
+SettingsGroupScope::~SettingsGroupScope()
+{
+  _settings.endGroup();
+}
+
+SettingsArrayScope::SettingsArrayScope(QSettings &settings) :
+  _settings(settings)
+{
+
+}
+
+SettingsArrayScope::~SettingsArrayScope()
+{
+  _settings.endArray();
+}
+
+SettingsReadArrayScope::SettingsReadArrayScope(QSettings &settings, const QString &arrayName) :
+  SettingsArrayScope(settings),
+  _size(settings.beginReadArray(arrayName))
+{
+
+}
+
+int SettingsReadArrayScope::size() const
+{
+  return _size;
+}
+
+SettingsWriteArrayScope::SettingsWriteArrayScope(QSettings &settings, const QString &arrayName, int size) :
+  SettingsArrayScope(settings)
+{
+  settings.beginWriteArray(arrayName, size);
 }

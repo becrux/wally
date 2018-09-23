@@ -22,6 +22,19 @@
 #include <QFileInfo>
 #include <QObject>
 #include <QWidget>
+#include <QVariantMap>
+
+constexpr const char *FILENAME = "fileName";
+constexpr const char *TITLE = "title";
+constexpr const char *SUBTITLE = "subtitle";
+constexpr const char *DESCRIPTION = "description";
+constexpr const char *LOCATION = "location";
+constexpr const char *AUTHOR = "author";
+constexpr const char *URL = "url";
+constexpr const char *CREATION_DATE = "creationDate";
+constexpr const char *WIDTH = "width";
+constexpr const char *HEIGHT = "height";
+constexpr const char *COPYRIGHT = "copyright";
 
 namespace Wally
 {
@@ -47,8 +60,10 @@ namespace Wally
 
       virtual SettingsWidget *settingsWidget(QWidget *parent) = 0;
 
+      virtual QString name() const = 0;
+
     signals:
-      void pictureAvailable(const QFileInfo &pictureFileName);
+      void pictureAvailable(const QFileInfo &pictureFileName, const QVariantMap &pictureInfo);
       void failed();
 
     public slots:
