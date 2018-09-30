@@ -56,7 +56,8 @@ SOURCES += \
   \
   libexif/pentax/exif-mnote-data-pentax.c \
   libexif/pentax/mnote-pentax-entry.c \
-  libexif/pentax/mnote-pentax-tag.c
+  libexif/pentax/mnote-pentax-tag.c \
+    src/engines/imgur.cpp
 
 HEADERS += \
   src/engine.hpp \
@@ -66,4 +67,5 @@ HEADERS += \
   src/exif.hpp \
   src/engines/flickr.hpp \
   src/engines/ipernity.hpp \
-  src/engines/deviantart.hpp
+  src/engines/deviantart.hpp \
+    src/engines/imgur.hpp

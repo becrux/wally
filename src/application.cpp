@@ -22,6 +22,7 @@
 #include "engines/flickr.hpp"
 #include "engines/ipernity.hpp"
 #include "engines/deviantart.hpp"
+#include "engines/imgur.hpp"
 
 #include <QFileInfo>
 #include <QSettings>
@@ -40,11 +41,10 @@ Application::Application(int &argc, char **argv) :
 
   _engines << new Engines::Flickr::Engine(this)
     << new Engines::Ipernity::Engine(this)
-    << new Engines::DeviantArt::Engine(this);
+    << new Engines::DeviantArt::Engine(this)
+    << new Engines::Imgur::Engine(this);
 
-  QMetaObject::invokeMethod(_engines.at(2), "selectNext", Qt::QueuedConnection);
-
-  // TODO: Imgur https://apidocs.imgur.com/
+  QMetaObject::invokeMethod(_engines.at(3), "selectNext", Qt::QueuedConnection);
 }
 
 QDir Application::dataDir()
