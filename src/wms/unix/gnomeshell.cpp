@@ -16,26 +16,44 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wms/shell.hpp"
-#include "application.hpp"
+#include "wms/unix/gnomeshell.hpp"
 
 #include <QProcess>
+#include <QUrl>
 
 using namespace Wally::WindowManagers;
 
-void Shell::showPhoto(const QString &sFileName)
+void GnomeShell::showPhoto(const QString &sFileName)
 {
   QProcess::execute(
-    QFileInfo(Application::dataDir(), "scripts/wally.sh").absoluteFilePath(),
-    QStringList{ sFileName }
+    "gsettings",
+
+    QStringList{
+      "set", "org.gnome.desktop.background", "draw-background", "true"
+    }
+  );
+
+  QProcess::execute(
+    "gsettings",
+
+    QStringList{
+      "set", "org.gnome.desktop.background", "picture-options", "centered"
+    }
+  );
+
+  QProcess::execute(
+    "gsettings",
+
+    QStringList{
+      "set",
+      "org.gnome.desktop.background",
+      "picture-uri",
+      QUrl::fromLocalFile(sFileName).toString()
+    }
   );
 }
 
-::Wally::FileFormats Shell::requestedFormat() const
+::Wally::Image::Format GnomeShell::requestedFormat() const
 {
-#ifdef WIN32
-  return ::Wally::FileFormats::BMP;
-#else
-  return ::Wally::FileFormats::PNG;
-#endif
+  return ::Wally::Image::Format::PNG;
 }

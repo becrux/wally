@@ -16,20 +16,18 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "wms/unix/fvwm.hpp"
 
-#include "wm.hpp"
+#include <QProcess>
 
-namespace Wally
+using namespace Wally::WindowManagers;
+
+void FVWM::showPhoto(const QString &sFileName)
 {
-  namespace WindowManagers
-  {
-    class Blackbox : public IWindowManager
-    {
-    public:
-      void showPhoto(const QString &sFileName) override;
+  QProcess::execute("fvwm-root", QStringList{ sFileName });
+}
 
-      FileFormats requestedFormat() const override;
-    };
-  } // namespace WindowManagers
-} // namespace Wally
+::Wally::Image::Format FVWM::requestedFormat() const
+{
+  return ::Wally::Image::Format::XPM;
+}

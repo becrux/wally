@@ -16,25 +16,22 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-
+#include "wms/macosx/shell.hpp"
 #include "application.hpp"
-#include "image.hpp"
 
-#include <QString>
+#include <QProcess>
 
-namespace Wally
+using namespace Wally::WindowManagers;
+
+void Shell::showPhoto(const QString &sFileName)
 {
-  namespace WindowManagers
-  {
-    class IWindowManager
-    {
-    public:
-      virtual ~IWindowManager() = default;
+  QProcess::execute(
+    QFileInfo(Application::dataDir(), "scripts/wally.sh").absoluteFilePath(),
+    QStringList{ sFileName }
+  );
+}
 
-      virtual void showPhoto(const QString &sFileName) = 0;
-
-      virtual Image::Format requestedFormat() const = 0;
-    };
-  } // namespace WindowManagers
-} // namespace Wally
+::Wally::Image::Format Shell::requestedFormat() const
+{
+  return ::Wally::Image::Format::PNG;
+}

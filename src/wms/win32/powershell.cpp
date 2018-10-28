@@ -16,18 +16,22 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wms/blackbox.hpp"
+#include "wms/win32/powershell.hpp"
+#include "application.hpp"
 
 #include <QProcess>
 
 using namespace Wally::WindowManagers;
 
-void Blackbox::showPhoto(const QString &sFileName)
+void PowerShell::showPhoto(const QString &sFileName)
 {
-  QProcess::execute("bsetbg", QStringList{ "-center", sFileName });
+  QProcess::execute(
+    QFileInfo(Application::dataDir(), "scripts/wally.ps").absoluteFilePath(),
+    QStringList{ sFileName }
+  );
 }
 
-::Wally::FileFormats Blackbox::requestedFormat() const
+::Wally::Image::Format PowerShell::requestedFormat() const
 {
-  return ::Wally::FileFormats::PNG;
+  return ::Wally::Image::Format::BMP;
 }

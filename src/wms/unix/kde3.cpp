@@ -16,18 +16,28 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wms/fluxbox.hpp"
+#include "wms/unix/kde3.hpp"
 
 #include <QProcess>
 
 using namespace Wally::WindowManagers;
 
-void Fluxbox::showPhoto(const QString &sFileName)
+void KDE3::showPhoto(const QString &sFileName)
 {
-  QProcess::execute("fbsetbg", QStringList{ "-c", sFileName });
+  QProcess::execute(
+    "dcop",
+
+    QStringList{
+      "kdesktop",
+      "KBackgroundIface",
+      "setWallpaper",
+      sFileName,
+      "1"
+    }
+  );
 }
 
-::Wally::FileFormats Fluxbox::requestedFormat() const
+::Wally::Image::Format KDE3::requestedFormat() const
 {
-  return ::Wally::FileFormats::PNG;
+  return ::Wally::Image::Format::PNG;
 }

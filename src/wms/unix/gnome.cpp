@@ -16,18 +16,43 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wms/windowmaker.hpp"
+#include "wms/unix/gnome.hpp"
 
 #include <QProcess>
 
 using namespace Wally::WindowManagers;
 
-void WindowMaker::showPhoto(const QString &sFileName)
+void Gnome::showPhoto(const QString &sFileName)
 {
-  QProcess::execute("wmsetbg", QStringList{ "-e", sFileName });
+  QProcess::execute(
+    "gconftool-2",
+
+    QStringList{
+      "--type", "bool",
+      "--set", "/desktop/gnome/background/draw_background", "true"
+    }
+  );
+
+  QProcess::execute(
+    "gconftool-2",
+
+    QStringList{
+      "--type", "string",
+      "--set", "/desktop/gnome/background/picture_options", "centered"
+    }
+  );
+
+  QProcess::execute(
+    "gconftool-2",
+
+    QStringList{
+      "--type", "string",
+      "--set", "/desktop/gnome/background/picture_filename", sFileName
+    }
+  );
 }
 
-::Wally::FileFormats WindowMaker::requestedFormat() const
+::Wally::Image::Format Gnome::requestedFormat() const
 {
-  return ::Wally::FileFormats::PNG;
+  return ::Wally::Image::Format::PNG;
 }

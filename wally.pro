@@ -25,6 +25,7 @@ SOURCES += \
   src/trayicon.cpp \
   src/settingswindow.cpp \
   src/exif.cpp \
+  src/image.cpp \
   src/engines/flickr.cpp \
   src/engines/ipernity.cpp \
   src/engines/deviantart.cpp \
@@ -65,6 +66,7 @@ HEADERS += \
   src/trayicon.hpp \
   src/settingswindow.hpp \
   src/exif.hpp \
+  src/image.hpp \
   src/wm.hpp \
   src/engines/flickr.hpp \
   src/engines/ipernity.hpp \
@@ -73,32 +75,54 @@ HEADERS += \
 
 linux-g++ {
   SOURCES += \
-    src/wms/shell.cpp \
-    src/wms/kde3.cpp \
-    src/wms/gnome.cpp \
-    src/wms/gnomeshell.cpp \
-    src/wms/xfce.cpp \
-    src/wms/fluxbox.cpp \
-    src/wms/fvwm.cpp \
-    src/wms/blackbox.cpp \
-    src/wms/windowmaker.cpp
+    src/wms/unix/shell.cpp \
+    src/wms/unix/kde.cpp \
+    src/wms/unix/kde3.cpp \
+    src/wms/unix/gnome.cpp \
+    src/wms/unix/gnomeshell.cpp \
+    src/wms/unix/xfce.cpp \
+    src/wms/unix/fluxbox.cpp \
+    src/wms/unix/fvwm.cpp \
+    src/wms/unix/blackbox.cpp \
+    src/wms/unix/windowmaker.cpp
 
   HEADERS += \
-    src/wms/shell.hpp \
-    src/wms/kde3.hpp \
-    src/wms/gnome.hpp \
-    src/wms/gnomeshell.hpp \
-    src/wms/xfce.hpp \
-    src/wms/fluxbox.hpp \
-    src/wms/fvwm.hpp \
-    src/wms/blackbox.hpp \
-    src/wms/windowmaker.hpp
+    src/wms/unix/shell.hpp \
+    src/wms/unix/kde.hpp \
+    src/wms/unix/kde3.hpp \
+    src/wms/unix/gnome.hpp \
+    src/wms/unix/gnomeshell.hpp \
+    src/wms/unix/xfce.hpp \
+    src/wms/unix/fluxbox.hpp \
+    src/wms/unix/fvwm.hpp \
+    src/wms/unix/blackbox.hpp \
+    src/wms/unix/windowmaker.hpp
 }
 
 win32 {
+  SOURCES += \
+    src/wms/win32/powershell.cpp \
+    src/wms/win32/native.cpp
 
+  HEADERS += \
+    src/wms/win32/powershell.hpp \
+    src/wms/win32/native.hpp
 }
 
 macx {
+  SOURCES += \
+    src/wms/macosx/shell.cpp \
+    src/wms/macosx/native.cpp
 
+  HEADERS += \
+    src/wms/macosx/shell.hpp \
+    src/wms/macosx/native.hpp
+}
+
+os2 {
+  SOURCES += \
+    src/wms/os2/native.cpp
+
+  HEADERS += \
+    src/wms/os2/native.hpp
 }

@@ -16,25 +16,33 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "wms/os2/native.hpp"
 
-#include "application.hpp"
-#include "image.hpp"
+#include <QDir>
 
-#include <QString>
+#define INCL_WINWORKPLACE
+#include <os2.h>
+#include <os2emx.h>
 
-namespace Wally
+using namespace Wally::WindowManagers;
+
+void Native::showPhoto(const QString &sFileName)
 {
-  namespace WindowManagers
-  {
-    class IWindowManager
-    {
-    public:
-      virtual ~IWindowManager() = default;
+  HOBJECT hobj;
+  const char *objName = "<WP_DESKTOP>";
 
-      virtual void showPhoto(const QString &sFileName) = 0;
+  if (hobj = WinQueryObject(reinterpret_cast< const unsigned char * >(objName)))
+    WinSetObjectData(
+      hobj,
+      reinterpret_cast< const unsigned char * >(
+        QString("BACKGROUND=%1,S,1,I;").arg(
+          QDir::toNativeSeparators(sFileName)
+        ).toUtf8().constData()
+      )
+    );
+}
 
-      virtual Image::Format requestedFormat() const = 0;
-    };
-  } // namespace WindowManagers
-} // namespace Wally
+::Wally::Image::Format Native::requestedFormat() const
+{
+  return ::Wally::Image::Format::BMP;
+}

@@ -29,7 +29,7 @@ namespace Wally
     public:
       void showPhoto(const QString &sFileName) override;
 
-      FileFormats requestedFormat() const override;
+      Image::Format requestedFormat() const override;
     };
   } // namespace WindowManagers
 } // namespace Wally

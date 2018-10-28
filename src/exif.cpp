@@ -16,7 +16,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "src/exif.hpp"
+#include "exif.hpp"
 
 #include <QSharedPointer>
 #include <QTextCodec>

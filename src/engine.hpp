@@ -34,6 +34,7 @@ constexpr const char *CREATION_DATE = "creationDate";
 constexpr const char *WIDTH = "width";
 constexpr const char *HEIGHT = "height";
 constexpr const char *COPYRIGHT = "copyright";
+constexpr const char *ENGINE = "engine";
 
 namespace Wally
 {

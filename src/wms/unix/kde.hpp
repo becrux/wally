@@ -24,12 +24,12 @@ namespace Wally
 {
   namespace WindowManagers
   {
-    class WindowMaker : public IWindowManager
+    class KDE : public IWindowManager
     {
     public:
       void showPhoto(const QString &sFileName) override;
 
-      FileFormats requestedFormat() const override;
+      Image::Format requestedFormat() const override;
     };
   } // namespace WindowManagers
 } // namespace Wally

@@ -18,23 +18,18 @@
 
 #pragma once
 
-#include "application.hpp"
-#include "image.hpp"
-
-#include <QString>
+#include "wm.hpp"
 
 namespace Wally
 {
   namespace WindowManagers
   {
-    class IWindowManager
+    class Shell : public IWindowManager
     {
     public:
-      virtual ~IWindowManager() = default;
+      void showPhoto(const QString &sFileName) override;
 
-      virtual void showPhoto(const QString &sFileName) = 0;
-
-      virtual Image::Format requestedFormat() const = 0;
+      Image::Format requestedFormat() const override;
     };
   } // namespace WindowManagers
 } // namespace Wally

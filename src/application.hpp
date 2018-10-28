@@ -27,16 +27,6 @@ namespace Wally
 {
   class TrayIcon;
 
-  enum class FileFormats
-  {
-    BMP,
-    JPG,
-    PNG,
-    PPM,
-    XBM,
-    XPM
-  };
-
   namespace Engines
   {
     class Base;

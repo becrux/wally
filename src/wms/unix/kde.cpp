@@ -16,43 +16,41 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wms/gnome.hpp"
+#include "wms/unix/kde.hpp"
 
 #include <QProcess>
+#include <QUrl>
 
 using namespace Wally::WindowManagers;
 
-void Gnome::showPhoto(const QString &sFileName)
+void KDE::showPhoto(const QString &sFileName)
 {
   QProcess::execute(
-    "gconftool-2",
+    "qdbus",
 
     QStringList{
-      "--type", "bool",
-      "--set", "/desktop/gnome/background/draw_background", "true"
-    }
-  );
+      "--session",
+      "--dest=org.kde.plasmashell",
+      "--type=method_call", "/PlasmaShell",
+      "org.kde.PlasmaShell.evaluateScript",
 
-  QProcess::execute(
-    "gconftool-2",
+      QString(
+        "'string:"
+          "var Desktops = desktops();"
+          "for (i=0;i<Desktops.length;i++) {"
+            "d = Desktops[i];"
+            "d.wallpaperPlugin = \"org.kde.image\";"
+            "d.currentConfigGroup = Array(\"Wallpaper\", \"org.kde.image\", \"General\");"
+            "d.writeConfig(\"Image\", \"%1\");"
+          "}"
+        "'"
 
-    QStringList{
-      "--type", "string",
-      "--set", "/desktop/gnome/background/picture_options", "centered"
-    }
-  );
-
-  QProcess::execute(
-    "gconftool-2",
-
-    QStringList{
-      "--type", "string",
-      "--set", "/desktop/gnome/background/picture_filename", sFileName
+      ).arg(QUrl::fromLocalFile(sFileName).toString())
     }
   );
 }
 
-::Wally::FileFormats Gnome::requestedFormat() const
+::Wally::Image::Format KDE::requestedFormat() const
 {
-  return ::Wally::FileFormats::PNG;
+  return ::Wally::Image::Format::PNG;
 }

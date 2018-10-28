@@ -16,18 +16,18 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wms/fvwm.hpp"
+#include "wms/unix/fluxbox.hpp"
 
 #include <QProcess>
 
 using namespace Wally::WindowManagers;
 
-void FVWM::showPhoto(const QString &sFileName)
+void Fluxbox::showPhoto(const QString &sFileName)
 {
-  QProcess::execute("fvwm-root", QStringList{ sFileName });
+  QProcess::execute("fbsetbg", QStringList{ "-c", sFileName });
 }
 
-::Wally::FileFormats FVWM::requestedFormat() const
+::Wally::Image::Format Fluxbox::requestedFormat() const
 {
-  return ::Wally::FileFormats::XPM;
+  return ::Wally::Image::Format::PNG;
 }

@@ -24,12 +24,12 @@ namespace Wally
 {
   namespace WindowManagers
   {
-    class GnomeShell : public IWindowManager
+    class Native : public IWindowManager
     {
     public:
       void showPhoto(const QString &sFileName) override;
 
-      FileFormats requestedFormat() const override;
+      Image::Format requestedFormat() const override;
     };
   } // namespace WindowManagers
 } // namespace Wally

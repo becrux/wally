@@ -16,28 +16,20 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wms/kde3.hpp"
+#pragma once
 
-#include <QProcess>
+#include "wm.hpp"
 
-using namespace Wally::WindowManagers;
-
-void KDE3::showPhoto(const QString &sFileName)
+namespace Wally
 {
-  QProcess::execute(
-    "dcop",
+  namespace WindowManagers
+  {
+    class Gnome : public IWindowManager
+    {
+    public:
+      void showPhoto(const QString &sFileName) override;
 
-    QStringList{
-      "kdesktop",
-      "KBackgroundIface",
-      "setWallpaper",
-      sFileName,
-      "1"
-    }
-  );
-}
-
-::Wally::FileFormats KDE3::requestedFormat() const
-{
-  return ::Wally::FileFormats::PNG;
-}
+      Image::Format requestedFormat() const override;
+    };
+  } // namespace WindowManagers
+} // namespace Wally

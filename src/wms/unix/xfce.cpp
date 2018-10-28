@@ -16,7 +16,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wms/xfce.hpp"
+#include "wms/unix/xfce.hpp"
 
 #include <QFile>
 #include <QProcess>
@@ -133,7 +133,7 @@ void XFCE::showPhoto(const QString &sFileName)
   }
 }
 
-::Wally::FileFormats XFCE::requestedFormat() const
+::Wally::Image::Format XFCE::requestedFormat() const
 {
-  return ::Wally::FileFormats::PNG;
+  return ::Wally::Image::Format::PNG;
 }

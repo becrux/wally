@@ -16,25 +16,18 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "wms/unix/blackbox.hpp"
 
-#include "application.hpp"
-#include "image.hpp"
+#include <QProcess>
 
-#include <QString>
+using namespace Wally::WindowManagers;
 
-namespace Wally
+void Blackbox::showPhoto(const QString &sFileName)
 {
-  namespace WindowManagers
-  {
-    class IWindowManager
-    {
-    public:
-      virtual ~IWindowManager() = default;
+  QProcess::execute("bsetbg", QStringList{ "-center", sFileName });
+}
 
-      virtual void showPhoto(const QString &sFileName) = 0;
-
-      virtual Image::Format requestedFormat() const = 0;
-    };
-  } // namespace WindowManagers
-} // namespace Wally
+::Wally::Image::Format Blackbox::requestedFormat() const
+{
+  return ::Wally::Image::Format::PNG;
+}
