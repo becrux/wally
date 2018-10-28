@@ -16,17 +16,18 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "wms/windowmaker.hpp"
 
-#include <QDialog>
+#include <QProcess>
 
-namespace Wally
+using namespace Wally::WindowManagers;
+
+void WindowMaker::showPhoto(const QString &sFileName)
 {
-  class SettingsWindow : public QDialog
-  {
-    Q_OBJECT
+  QProcess::execute("wmsetbg", QStringList{ "-e", sFileName });
+}
 
-  public:
-    explicit SettingsWindow(QWidget *parent = nullptr);
-  };
-} // namespace Wally
+::Wally::FileFormats WindowMaker::requestedFormat() const
+{
+  return ::Wally::FileFormats::PNG;
+}

@@ -16,8 +16,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WALLY_APPLICATION_HPP
-#define WALLY_APPLICATION_HPP
+#pragma once
 
 #include <QApplication>
 #include <QDir>
@@ -27,6 +26,16 @@ class QSettings;
 namespace Wally
 {
   class TrayIcon;
+
+  enum class FileFormats
+  {
+    BMP,
+    JPG,
+    PNG,
+    PPM,
+    XBM,
+    XPM
+  };
 
   namespace Engines
   {
@@ -89,5 +98,3 @@ namespace Wally
     static QSettings &storage();
   };
 } // namespace Wally
-
-#endif // APPLICATION_HPP

@@ -16,17 +16,18 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "wms/fluxbox.hpp"
 
-#include <QDialog>
+#include <QProcess>
 
-namespace Wally
+using namespace Wally::WindowManagers;
+
+void Fluxbox::showPhoto(const QString &sFileName)
 {
-  class SettingsWindow : public QDialog
-  {
-    Q_OBJECT
+  QProcess::execute("fbsetbg", QStringList{ "-c", sFileName });
+}
 
-  public:
-    explicit SettingsWindow(QWidget *parent = nullptr);
-  };
-} // namespace Wally
+::Wally::FileFormats Fluxbox::requestedFormat() const
+{
+  return ::Wally::FileFormats::PNG;
+}

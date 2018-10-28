@@ -16,8 +16,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WALLY_EXIF_HPP
-#define WALLY_EXIF_HPP
+#pragma once
 
 extern "C"
 {
@@ -55,5 +54,3 @@ namespace Wally
     };
   }
 }
-
-#endif

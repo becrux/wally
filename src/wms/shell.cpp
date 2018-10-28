@@ -16,17 +16,26 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "wms/shell.hpp"
+#include "application.hpp"
 
-#include <QDialog>
+#include <QProcess>
 
-namespace Wally
+using namespace Wally::WindowManagers;
+
+void Shell::showPhoto(const QString &sFileName)
 {
-  class SettingsWindow : public QDialog
-  {
-    Q_OBJECT
+  QProcess::execute(
+    QFileInfo(Application::dataDir(), "scripts/wally.sh").absoluteFilePath(),
+    QStringList{ sFileName }
+  );
+}
 
-  public:
-    explicit SettingsWindow(QWidget *parent = nullptr);
-  };
-} // namespace Wally
+::Wally::FileFormats Shell::requestedFormat() const
+{
+#ifdef WIN32
+  return ::Wally::FileFormats::BMP;
+#else
+  return ::Wally::FileFormats::PNG;
+#endif
+}

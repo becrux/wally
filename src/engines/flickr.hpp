@@ -16,8 +16,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WALLY_ENGINE_FLICKR_HPP
-#define WALLY_ENGINE_FLICKR_HPP
+#pragma once
 
 #include "engine.hpp"
 
@@ -96,5 +95,3 @@ namespace Wally
     } // namespace Flickr
   } // namespace Engines
 } // namespace Wally
-
-#endif // WALLY_ENGINE_FLICKR_HPP

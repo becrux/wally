@@ -16,8 +16,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WALLY_TRAYICON_HPP
-#define WALLY_TRAYICON_HPP
+#pragma once
 
 #include <QSystemTrayIcon>
 
@@ -29,5 +28,3 @@ namespace Wally
     explicit TrayIcon(QObject *parent = nullptr);
   };
 } // namespace Wally
-
-#endif // WALLY_TRAYICON_HPP

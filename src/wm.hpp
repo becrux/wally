@@ -18,15 +18,22 @@
 
 #pragma once
 
-#include <QDialog>
+#include "application.hpp"
+
+#include <QString>
 
 namespace Wally
 {
-  class SettingsWindow : public QDialog
+  namespace WindowManagers
   {
-    Q_OBJECT
+    class IWindowManager
+    {
+    public:
+      virtual ~IWindowManager() = default;
 
-  public:
-    explicit SettingsWindow(QWidget *parent = nullptr);
-  };
+      virtual void showPhoto(const QString &sFileName) = 0;
+
+      virtual FileFormats requestedFormat() const = 0;
+    };
+  } // namespace WindowManagers
 } // namespace Wally

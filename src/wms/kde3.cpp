@@ -16,17 +16,28 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "wms/kde3.hpp"
 
-#include <QDialog>
+#include <QProcess>
 
-namespace Wally
+using namespace Wally::WindowManagers;
+
+void KDE3::showPhoto(const QString &sFileName)
 {
-  class SettingsWindow : public QDialog
-  {
-    Q_OBJECT
+  QProcess::execute(
+    "dcop",
 
-  public:
-    explicit SettingsWindow(QWidget *parent = nullptr);
-  };
-} // namespace Wally
+    QStringList{
+      "kdesktop",
+      "KBackgroundIface",
+      "setWallpaper",
+      sFileName,
+      "1"
+    }
+  );
+}
+
+::Wally::FileFormats KDE3::requestedFormat() const
+{
+  return ::Wally::FileFormats::PNG;
+}

@@ -16,8 +16,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WALLY_ENGINE_DEVIANTART_HPP
-#define WALLY_ENGINE_DEVIANTART_HPP
+#pragma once
 
 #include "engine.hpp"
 
@@ -62,5 +61,3 @@ namespace Wally
     } // namespace DeviantArt
   } // namespace Engines
 } // namespace Wally
-
-#endif // WALLY_ENGINE_DEVIANTART_HPP

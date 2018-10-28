@@ -16,17 +16,18 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "wms/fvwm.hpp"
 
-#include <QDialog>
+#include <QProcess>
 
-namespace Wally
+using namespace Wally::WindowManagers;
+
+void FVWM::showPhoto(const QString &sFileName)
 {
-  class SettingsWindow : public QDialog
-  {
-    Q_OBJECT
+  QProcess::execute("fvwm-root", QStringList{ sFileName });
+}
 
-  public:
-    explicit SettingsWindow(QWidget *parent = nullptr);
-  };
-} // namespace Wally
+::Wally::FileFormats FVWM::requestedFormat() const
+{
+  return ::Wally::FileFormats::XPM;
+}

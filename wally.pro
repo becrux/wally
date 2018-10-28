@@ -28,6 +28,7 @@ SOURCES += \
   src/engines/flickr.cpp \
   src/engines/ipernity.cpp \
   src/engines/deviantart.cpp \
+  src/engines/imgur.cpp \
   \
   libexif/exif-byte-order.c \
   libexif/exif-content.c \
@@ -56,8 +57,7 @@ SOURCES += \
   \
   libexif/pentax/exif-mnote-data-pentax.c \
   libexif/pentax/mnote-pentax-entry.c \
-  libexif/pentax/mnote-pentax-tag.c \
-    src/engines/imgur.cpp
+  libexif/pentax/mnote-pentax-tag.c
 
 HEADERS += \
   src/engine.hpp \
@@ -65,7 +65,40 @@ HEADERS += \
   src/trayicon.hpp \
   src/settingswindow.hpp \
   src/exif.hpp \
+  src/wm.hpp \
   src/engines/flickr.hpp \
   src/engines/ipernity.hpp \
   src/engines/deviantart.hpp \
-    src/engines/imgur.hpp
+  src/engines/imgur.hpp
+
+linux-g++ {
+  SOURCES += \
+    src/wms/shell.cpp \
+    src/wms/kde3.cpp \
+    src/wms/gnome.cpp \
+    src/wms/gnomeshell.cpp \
+    src/wms/xfce.cpp \
+    src/wms/fluxbox.cpp \
+    src/wms/fvwm.cpp \
+    src/wms/blackbox.cpp \
+    src/wms/windowmaker.cpp
+
+  HEADERS += \
+    src/wms/shell.hpp \
+    src/wms/kde3.hpp \
+    src/wms/gnome.hpp \
+    src/wms/gnomeshell.hpp \
+    src/wms/xfce.hpp \
+    src/wms/fluxbox.hpp \
+    src/wms/fvwm.hpp \
+    src/wms/blackbox.hpp \
+    src/wms/windowmaker.hpp
+}
+
+win32 {
+
+}
+
+macx {
+
+}

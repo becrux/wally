@@ -18,15 +18,18 @@
 
 #pragma once
 
-#include <QDialog>
+#include "wm.hpp"
 
 namespace Wally
 {
-  class SettingsWindow : public QDialog
+  namespace WindowManagers
   {
-    Q_OBJECT
+    class Fluxbox : public IWindowManager
+    {
+    public:
+      void showPhoto(const QString &sFileName) override;
 
-  public:
-    explicit SettingsWindow(QWidget *parent = nullptr);
-  };
+      FileFormats requestedFormat() const override;
+    };
+  } // namespace WindowManagers
 } // namespace Wally

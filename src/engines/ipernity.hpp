@@ -16,8 +16,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WALLY_ENGINE_IPERNITY_HPP
-#define WALLY_ENGINE_IPERNITY_HPP
+#pragma once
 
 #include "engine.hpp"
 
@@ -63,5 +62,3 @@ namespace Wally
     } // namespace Ipernity
   } // namespace Engines
 } // namespace Wally
-
-#endif // WALLY_ENGINE_IPERNITY_HPP

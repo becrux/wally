@@ -16,8 +16,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WALLY_ENGINE_HPP
-#define WALLY_ENGINE_HPP
+#pragma once
 
 #include <QFileInfo>
 #include <QObject>
@@ -71,5 +70,3 @@ namespace Wally
     };
   } // namespace Engines
 } // namespace Wally
-
-#endif // WALLY_ENGINE_HPP
