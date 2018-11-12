@@ -26,6 +26,7 @@
 
 #include <QFileInfo>
 #include <QSettings>
+#include <QStandardPaths>
 #include <QSystemTrayIcon>
 
 using namespace Wally;
@@ -38,6 +39,9 @@ Application::Application(int &argc, char **argv) :
   _trayIcon(new TrayIcon(this))
 {
   _app = this;
+  setApplicationName("Wally");
+  setOrganizationName("BeCrux");
+  setApplicationVersion(WALLY_VERSION);
 
   _engines << new Engines::Flickr::Engine(this)
     << new Engines::Ipernity::Engine(this)
@@ -56,9 +60,10 @@ QDir Application::dataDir()
 
 QDir Application::createDataDir()
 {
-  QDir::home().mkpath(".wally");
+  QString path = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+  QDir::root().mkpath(path);
 
-  return QFileInfo(QDir::home(), ".wally").absoluteFilePath();
+  return path;
 }
 
 QSettings &Application::storage()

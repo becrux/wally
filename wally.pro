@@ -18,6 +18,8 @@ QMAKE_CXXFLAGS += -std=c++14 -Wall -Wextra -pedantic
 
 INCLUDEPATH += src libexif
 
+DEFINES += WALLY_VERSION=\\\"3.0.0\\\"
+
 SOURCES += \
   src/main.cpp \
   src/engine.cpp \
@@ -26,6 +28,7 @@ SOURCES += \
   src/settingswindow.cpp \
   src/exif.cpp \
   src/image.cpp \
+  src/utils.cpp \
   src/engines/flickr.cpp \
   src/engines/ipernity.cpp \
   src/engines/deviantart.cpp \
@@ -68,12 +71,15 @@ HEADERS += \
   src/exif.hpp \
   src/image.hpp \
   src/wm.hpp \
+  src/utils.hpp \
   src/engines/flickr.hpp \
   src/engines/ipernity.hpp \
   src/engines/deviantart.hpp \
   src/engines/imgur.hpp
 
 linux-g++ {
+  DEFINES += LINUX
+
   SOURCES += \
     src/wms/unix/shell.cpp \
     src/wms/unix/kde.cpp \
@@ -100,6 +106,8 @@ linux-g++ {
 }
 
 win32 {
+  DEFINES += WIN32
+
   SOURCES += \
     src/wms/win32/powershell.cpp \
     src/wms/win32/native.cpp
@@ -110,6 +118,8 @@ win32 {
 }
 
 macx {
+  DEFINES += MACOSX
+
   SOURCES += \
     src/wms/macosx/shell.cpp \
     src/wms/macosx/native.cpp
@@ -120,6 +130,8 @@ macx {
 }
 
 os2 {
+  DEFINES += OS2
+
   SOURCES += \
     src/wms/os2/native.cpp
 
