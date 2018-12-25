@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.1.0)
 project(wally C CXX)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_C_FLAGS_DEBUG "-O0 -g -g3 -ggdb -gdwarf-4")
+set(CMAKE_C_FLAGS_DEBUG "-O0 -g -g3 -ggdb -gdwarf-4 -fstack-protector")
 set(CMAKE_C_FLAGS_RELEASE "-O3 -flto")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -g3 -ggdb -gdwarf-4")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -g3 -ggdb -gdwarf-4 -fstack-protector -frtti -fexceptions")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto -frtti -fexceptions")
 
 add_subdirectory(libexif)
 
@@ -31,18 +31,49 @@ set(wally_SRCS
   src/engines/ipernity.cpp
 )
 
-IF(WIN32)
-  add_executable(wally
-    WIN32
-    ${wally_SRCS}
-    $<TARGET_OBJECTS:exif_objlib>
+IF(OS2)
+  set(wally_SRCS ${wally_SRCS}
+    src/wms/os2/native.cpp
   )
+
+  set(wally_DEFINES OS2)
+ELSEIF(WIN32)
+  set(wally_SRCS ${wally_SRCS}
+    src/wms/win32/native.cpp
+    src/wms/win32/powershell.cpp
+  )
+
+  set(wally_DEFINES WIN32)
+  set(wally_APP_FLAG WIN32)
+ELSEIF(APPLE)
+  set(wally_SRCS ${wally_SRCS}
+    src/wms/macosx/native.cpp
+    src/wms/macosx/shell.cpp
+  )
+
+  set(wally_DEFINES MACOSX)
 ELSE()
-  add_executable(wally
-    ${wally_SRCS}
-    $<TARGET_OBJECTS:exif_objlib>
+  set(wally_SRCS ${wally_SRCS}
+    src/wms/unix/blackbox.cpp
+    src/wms/unix/fluxbox.cpp
+    src/wms/unix/fvwm.cpp
+    src/wms/unix/gnome.cpp
+    src/wms/unix/gnomeshell.cpp
+    src/wms/unix/kde.cpp
+    src/wms/unix/kde3.cpp
+    src/wms/unix/shell.cpp
+    src/wms/unix/windowmaker.cpp
+    src/wms/unix/xfce.cpp
   )
+
+  set(wally_DEFINES LINUX)
 ENDIF()
+
+add_executable(wally
+  ${wally_APP_FLAG}
+  ${wally_SRCS}
+  $<TARGET_OBJECTS:exif_objlib>
+)
 
 set_property(TARGET wally PROPERTY CXX_STANDARD 14)
 
@@ -50,30 +81,19 @@ target_compile_definitions(wally
   PRIVATE
     WALLY_VERSION="3.0.0"
     QT_DEPRECATED_WARNINGS
+    ${wally_DEFINES}
 )
-
-IF(WIN32)
-  target_compile_definitions(wally
-    PRIVATE
-      WIN32
-  )
-ELSEIF(APPLE)
-  target_compile_definitions(wally
-    PRIVATE
-      MACOSX
-  )
-ELSE()
-  target_compile_definitions(wally
-    PRIVATE
-      LINUX
-  )
-ENDIF()
 
 target_compile_options(wally
   PRIVATE
+    -std=c++14
+    -fstrict-aliasing
+    -fipa-pure-const
+
     -Wall
     -Wextra
     -pedantic
+    -Werror
 
     -Wcast-qual
     -Wcatch-value
@@ -84,6 +104,7 @@ target_compile_options(wally
     -Wdelete-non-virtual-dtor
     -Wduplicated-branches
     -Wduplicated-cond
+    -Wextra-semi
     -Wfloat-conversion
     -Wfloat-equal
     -Winit-self
@@ -91,11 +112,11 @@ target_compile_options(wally
     -Wmissing-declarations
     -Wmissing-include-dirs
     -Wnoexcept
-    -Wnoexcept-type
     -Wnon-virtual-dtor
     -Wnull-dereference
     -Wold-style-cast
     -Woverloaded-virtual
+    -Wparentheses
     -Wpointer-arith
     -Wredundant-decls
     -Wreorder
@@ -105,8 +126,13 @@ target_compile_options(wally
     -Wsuggest-attribute=pure
     -Wsuggest-attribute=const
     -Wsuggest-override
+    -Wstack-protector
+    -Wstrict-aliasing
+    -Wstrict-overflow
+    -Wswitch-default
+    -Wuninitialized
     -Wunused-macros
-    -Wuseless-cast
+    -Wunused-parameter
     -Wwrite-strings
     -Wzero-as-null-pointer-constant
 )

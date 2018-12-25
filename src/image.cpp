@@ -261,6 +261,7 @@ void Image::calculateCenters(
 
     case TiledMaxpect:
       cImageSize.scale(cDesktop.size(), Qt::KeepAspectRatio);
+      // fall through
 
     case Tiled: /* or tiled maxpect */
     case MirroredTiled:

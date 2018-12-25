@@ -26,8 +26,6 @@
 #include <QUrlQuery>
 #include <QXmlStreamReader>
 
-#define IPERNITY_API_KEY "e8315d400000273A461d49b1b40377fd"
-
 using namespace Wally::Engines::DeviantArt;
 
 Engine::Engine(QObject *parent) :

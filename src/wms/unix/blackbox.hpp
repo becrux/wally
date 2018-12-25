@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "compiler.hpp"
 #include "wm.hpp"
 
 namespace Wally
@@ -29,7 +30,7 @@ namespace Wally
     public:
       void showPhoto(const QString &sFileName) override;
 
-      Image::Format requestedFormat() const override;
+      DECL_CONST Image::Format requestedFormat() const override;
     };
   } // namespace WindowManagers
 } // namespace Wally

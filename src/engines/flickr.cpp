@@ -111,7 +111,7 @@ void Engine::selectNext()
   }
 
   urlQuery.addQueryItem("media", "photos");
-  urlQuery.addQueryItem("sort", "relevance");
+  urlQuery.addQueryItem("sort", so[item.searchOrder]);
   urlQuery.addQueryItem("per_page", "1");
 
   urlQuery.addQueryItem("page", QString::number(item.currentPage));
@@ -258,12 +258,11 @@ void Engine::processPhotoInfo()
   sender()->deleteLater();
 
   QVariantMap info;
+  bool respOk = false;
 
   QNetworkReply *networkReply = qobject_cast< QNetworkReply * >(sender());
   if (networkReply && (networkReply->error() == QNetworkReply::NoError))
   {
-    bool respOk = false;
-
     QXmlStreamReader xmlResp(networkReply->readAll());
 
     while (!xmlResp.atEnd())
@@ -300,7 +299,10 @@ void Engine::processPhotoInfo()
       }
   }
 
-  emit pictureAvailable(QFileInfo(networkReply->property("outputFileName").toString()), info);
+  emit pictureAvailable(
+    QFileInfo(networkReply->property("outputFileName").toString()),
+    (respOk)? info : QVariantMap()
+  );
 }
 
 void Engine::updateStorage()

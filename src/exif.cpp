@@ -30,7 +30,7 @@ void Reader::readEntry(ExifEntry *entry, void *data)
 
   Reader *me = reinterpret_cast< Reader * >(data);
 
-  exif_entry_get_value(entry, buf.data(), buf.size());
+  exif_entry_get_value(entry, buf.data(), static_cast< unsigned int >(buf.size()));
   me->_exifData[entry->tag] = QString::fromUtf8(buf.constData());
 }
 
@@ -60,7 +60,11 @@ void Reader::readExifData(const QByteArray &data)
     return;
 
   QSharedPointer< ExifData > ed(exif_data_new(), exif_data_free);
-  exif_data_load_data(ed.get(), reinterpret_cast< const unsigned char * >(data.constData()), data.size());
+  exif_data_load_data(
+    ed.get(),
+    reinterpret_cast< const unsigned char * >(data.constData()),
+    static_cast< unsigned int >(data.size())
+  );
 
   exif_data_foreach_content(ed.get(), readContent, reinterpret_cast< void * >(this));
 }

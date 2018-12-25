@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "compiler.hpp"
+
 #include <QApplication>
 #include <QDir>
 
@@ -59,7 +61,7 @@ namespace Wally
   public:
     explicit SettingsReadArrayScope(QSettings &settings, const QString &arrayName);
 
-    int size() const;
+    DECL_PURE int size() const;
   };
 
   class SettingsWriteArrayScope : public SettingsArrayScope
@@ -85,6 +87,6 @@ namespace Wally
 
     static QDir dataDir();
 
-    static QSettings &storage();
+    DECL_PURE static QSettings &storage();
   };
 } // namespace Wally

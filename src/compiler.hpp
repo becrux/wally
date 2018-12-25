@@ -18,19 +18,11 @@
 
 #pragma once
 
-#include "compiler.hpp"
-#include "wm.hpp"
+#ifdef __GNUC__
+  #define DECL_PURE __attribute__((pure))
+  #define DECL_CONST __attribute__((const))
+#else
+  #define DECL_PURE
+  #define DECL_CONST
+#endif
 
-namespace Wally
-{
-  namespace WindowManagers
-  {
-    class KDE : public IWindowManager
-    {
-    public:
-      void showPhoto(const QString &sFileName) override;
-
-      DECL_CONST Image::Format requestedFormat() const override;
-    };
-  } // namespace WindowManagers
-} // namespace Wally

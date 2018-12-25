@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "compiler.hpp"
+
 #include <QColor>
 #include <QHash>
 #include <QPair>
@@ -67,7 +69,7 @@ namespace Wally
     QColor _backgroundColor;
     Qt::AlignmentFlag _textAlignment;
 
-    static bool isCenterInsideDesktop(const QPoint &cCenter, const QSize &cImageSize, const QRect &cDesktop);
+    DECL_PURE static bool isCenterInsideDesktop(const QPoint &cCenter, const QSize &cImageSize, const QRect &cDesktop);
 
     static void fillCenters(
       const QRect &cDesktop,
@@ -88,7 +90,7 @@ namespace Wally
       bool isTitle = false
     );
 
-    static const char *formatToString(Format eFormat);
+    DECL_CONST static const char *formatToString(Format eFormat);
 
   public:
     explicit Image(
