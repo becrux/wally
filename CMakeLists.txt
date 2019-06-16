@@ -3,10 +3,18 @@ cmake_minimum_required(VERSION 3.1.0)
 project(wally C CXX)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_C_FLAGS_DEBUG "-O0 -g -g3 -ggdb -gdwarf-4 -fstack-protector")
-set(CMAKE_C_FLAGS_RELEASE "-O3 -flto")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -g3 -ggdb -gdwarf-4 -fstack-protector -frtti -fexceptions")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto -frtti -fexceptions")
+if(MSVC)
+  set(CMAKE_C_FLAGS_DEBUG "/MDd /Od")
+  set(CMAKE_CXX_FLAGS_DEBUG "/MDd /Od /GR")
+  set(CMAKE_C_FLAGS_RELEASE "/MD /GL /Ox /Gw")
+  set(CMAKE_CXX_FLAGS_RELEASE "/MD /GL /Ox /GR /Gw")
+  set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /LTCG /INCREMENTAL:NO /OPT:REF")
+else()
+  set(CMAKE_C_FLAGS_DEBUG "-O0 -g -g3 -ggdb -gdwarf-4 -fstack-protector")
+  set(CMAKE_C_FLAGS_RELEASE "-O3 -flto")
+  set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -g3 -ggdb -gdwarf-4 -fstack-protector -frtti -fexceptions")
+  set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto -frtti -fexceptions")
+endif()
 
 add_subdirectory(libexif)
 
@@ -31,13 +39,13 @@ set(wally_SRCS
   src/engines/ipernity.cpp
 )
 
-IF(OS2)
+if(OS2)
   set(wally_SRCS ${wally_SRCS}
     src/wms/os2/native.cpp
   )
 
   set(wally_DEFINES OS2)
-ELSEIF(WIN32)
+elseif(WIN32)
   set(wally_SRCS ${wally_SRCS}
     src/wms/win32/native.cpp
     src/wms/win32/powershell.cpp
@@ -45,14 +53,14 @@ ELSEIF(WIN32)
 
   set(wally_DEFINES WIN32)
   set(wally_APP_FLAG WIN32)
-ELSEIF(APPLE)
+elseif(APPLE)
   set(wally_SRCS ${wally_SRCS}
     src/wms/macosx/native.cpp
     src/wms/macosx/shell.cpp
   )
 
   set(wally_DEFINES MACOSX)
-ELSE()
+else()
   set(wally_SRCS ${wally_SRCS}
     src/wms/unix/blackbox.cpp
     src/wms/unix/fluxbox.cpp
@@ -67,7 +75,7 @@ ELSE()
   )
 
   set(wally_DEFINES LINUX)
-ENDIF()
+endif()
 
 add_executable(wally
   ${wally_APP_FLAG}
@@ -84,58 +92,65 @@ target_compile_definitions(wally
     ${wally_DEFINES}
 )
 
-target_compile_options(wally
-  PRIVATE
-    -std=c++14
-    -fstrict-aliasing
-    -fipa-pure-const
+if(MSVC)
+  target_compile_options(wally
+    PRIVATE
+      /W4
+  )
+else()
+  target_compile_options(wally
+    PRIVATE
+      -std=c++14
+      -fstrict-aliasing
+      -fipa-pure-const
 
-    -Wall
-    -Wextra
-    -pedantic
-    -Werror
+      -Wall
+      -Wextra
+      -pedantic
+      -Werror
 
-    -Wcast-qual
-    -Wcatch-value
-    -Wclass-memaccess
-    -Wconversion
-    -Wctor-dtor-privacy
-    -Wdate-time
-    -Wdelete-non-virtual-dtor
-    -Wduplicated-branches
-    -Wduplicated-cond
-    -Wextra-semi
-    -Wfloat-conversion
-    -Wfloat-equal
-    -Winit-self
-    -Wlogical-op
-    -Wmissing-declarations
-    -Wmissing-include-dirs
-    -Wnoexcept
-    -Wnon-virtual-dtor
-    -Wnull-dereference
-    -Wold-style-cast
-    -Woverloaded-virtual
-    -Wparentheses
-    -Wpointer-arith
-    -Wredundant-decls
-    -Wreorder
-    -Wshadow
-    -Wsign-conversion
-    -Wsign-promo
-    -Wsuggest-attribute=pure
-    -Wsuggest-attribute=const
-    -Wsuggest-override
-    -Wstack-protector
-    -Wstrict-aliasing
-    -Wstrict-overflow
-    -Wswitch-default
-    -Wuninitialized
-    -Wunused-macros
-    -Wunused-parameter
-    -Wwrite-strings
-    -Wzero-as-null-pointer-constant
-)
+      -Wcast-qual
+      -Wcatch-value
+      -Wclass-memaccess
+      -Wconversion
+      -Wctor-dtor-privacy
+      -Wdate-time
+      -Wdelete-non-virtual-dtor
+      -Wduplicated-branches
+      -Wduplicated-cond
+      -Wextra-semi
+      -Wfloat-conversion
+      -Wfloat-equal
+      -Winit-self
+      -Wlogical-op
+      -Wmissing-declarations
+      -Wmissing-include-dirs
+      -Wnoexcept
+      -Wnon-virtual-dtor
+      -Wnull-dereference
+      -Wold-style-cast
+      -Woverloaded-virtual
+      -Wparentheses
+      -Wpointer-arith
+      -Wredundant-decls
+      -Wreorder
+      -Wshadow
+      -Wsign-conversion
+      -Wsign-promo
+      -Wsuggest-attribute=pure
+      -Wsuggest-attribute=const
+      -Wsuggest-override
+      -Wstack-protector
+      -Wstrict-aliasing
+      -Wstrict-overflow
+      -Wswitch-default
+      -Wuninitialized
+      -Wunused-macros
+      -Wunused-parameter
+      -Wwrite-strings
+      -Wzero-as-null-pointer-constant
+  )
+endif()
 
 target_include_directories(wally
   PRIVATE

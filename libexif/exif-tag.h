@@ -272,7 +272,7 @@ ExifTag      exif_tag_table_get_tag  (unsigned int n);
 const char  *exif_tag_table_get_name (unsigned int n);
 
 /*! \internal */
-unsigned int exif_tag_table_count    (void);
+extern unsigned int exif_tag_table_count    (void);
 
 
 /* Don't use these definitions. They are here for compatibility only. */

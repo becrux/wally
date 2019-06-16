@@ -27,6 +27,11 @@
 #include <string.h>
 #include <stdio.h>
 
+#if defined(_MSC_VER)
+  #include <BaseTsd.h>
+  typedef SSIZE_T ssize_t;
+#endif
+
 #undef JPEG_MARKER_DHT
 #define JPEG_MARKER_DHT  0xc4
 #undef JPEG_MARKER_SOI

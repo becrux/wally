@@ -32,6 +32,13 @@ set(libexif_SRCS
 add_library(exif_objlib OBJECT ${libexif_SRCS})
 
 set_property(TARGET exif_objlib PROPERTY C_STANDARD 11)
-target_compile_options(exif_objlib PRIVATE "-std=c11")
+
+if(MSVC)
+  target_compile_definitions(exif_objlib PRIVATE _CRT_SECURE_NO_WARNINGS)
+  target_compile_options(exif_objlib PRIVATE "/w")
+else()
+  target_compile_options(exif_objlib PRIVATE "-std=c11")
+endif()
+
 target_include_directories(exif_objlib PRIVATE ${CMAKE_SOURCE_DIR})
 
