@@ -48,6 +48,11 @@ QString Engine::name() const
   return "Imgur";
 }
 
+QPixmap Engine::icon() const
+{
+  return QPixmap();
+}
+
 void Engine::selectNext()
 {
   QUrlQuery urlQuery;

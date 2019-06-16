@@ -77,6 +77,8 @@ else()
   set(wally_DEFINES LINUX)
 endif()
 
+qt5_add_resources(wally_SRCS res/images.qrc)
+
 add_executable(wally
   ${wally_APP_FLAG}
   ${wally_SRCS}
@@ -110,15 +112,15 @@ else()
       -Werror
 
       -Wcast-qual
-      -Wcatch-value
-      -Wclass-memaccess
+      #-Wcatch-value
+      #-Wclass-memaccess
       -Wconversion
       -Wctor-dtor-privacy
       -Wdate-time
       -Wdelete-non-virtual-dtor
       -Wduplicated-branches
       -Wduplicated-cond
-      -Wextra-semi
+      #-Wextra-semi
       -Wfloat-conversion
       -Wfloat-equal
       -Winit-self
@@ -137,8 +139,8 @@ else()
       -Wshadow
       -Wsign-conversion
       -Wsign-promo
-      -Wsuggest-attribute=pure
-      -Wsuggest-attribute=const
+      #-Wsuggest-attribute=pure
+      #-Wsuggest-attribute=const
       -Wsuggest-override
       -Wstack-protector
       -Wstrict-aliasing

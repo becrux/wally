@@ -33,8 +33,8 @@
 
 using namespace Wally::Engines::Flickr;
 
-Engine::Engine(QObject *parent) :
-  ::Wally::Engines::Base(parent),
+Engine::Engine(QObject *pParent) :
+  ::Wally::Engines::Base(pParent),
   _currentItem(0),
   _networkAccessManager(new QNetworkAccessManager(this))
 {
@@ -65,6 +65,11 @@ Engine::Engine(QObject *parent) :
 QString Engine::name() const
 {
   return "Flickr";
+}
+
+QPixmap Engine::icon() const
+{
+  return QPixmap();
 }
 
 void Engine::selectNext()

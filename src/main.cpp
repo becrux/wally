@@ -23,5 +23,7 @@ int main(int argc, char **argv)
 {
   Wally::Application a(argc, argv);
 
+  a.init();
+
   return a.exec();
 }

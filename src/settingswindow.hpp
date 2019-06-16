@@ -18,15 +18,49 @@
 
 #pragma once
 
+#include <QAbstractItemDelegate>
+#include <QAbstractListModel>
 #include <QDialog>
+#include <QListView>
+
+class QPainter;
+class QStackedLayout;
 
 namespace Wally
 {
-  class SettingsWindow : public QDialog
-  {
-    Q_OBJECT
+  class Application;
 
-  public:
-    explicit SettingsWindow(QWidget *parent = nullptr);
-  };
+  namespace Engines
+  {
+    class Base;
+  }
+
+  namespace Settings
+  {
+    namespace EnginesToolbar
+    {
+      class ItemDelegate : public QAbstractItemDelegate
+      {
+      public:
+        explicit ItemDelegate(QObject *pParent = nullptr);
+
+        void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+        QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+      };
+
+      class View : public QListView
+      {
+      public:
+        explicit View(QWidget *pParent = nullptr);
+      };
+    }
+
+    class Window : public QDialog
+    {
+      Q_OBJECT
+
+    public:
+      explicit Window(const Application *pApp, QWidget *pParent = nullptr);
+    };
+  } // namespace Settings
 } // namespace Wally

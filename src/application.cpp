@@ -25,6 +25,7 @@
 #include "engines/imgur.hpp"
 
 #include <QFileInfo>
+#include <QMenu>
 #include <QSettings>
 #include <QStandardPaths>
 #include <QSystemTrayIcon>
@@ -43,12 +44,121 @@ Application::Application(int &argc, char **argv) :
   setOrganizationName("BeCrux");
   setApplicationVersion(WALLY_VERSION);
 
+  // QMetaObject::invokeMethod(_engines.at(3), "selectNext", Qt::QueuedConnection);
+}
+
+void Application::init()
+{
   _engines << new Engines::Flickr::Engine(this)
     << new Engines::Ipernity::Engine(this)
     << new Engines::DeviantArt::Engine(this)
     << new Engines::Imgur::Engine(this);
 
-  QMetaObject::invokeMethod(_engines.at(3), "selectNext", Qt::QueuedConnection);
+  initTrayIcon();
+
+  _trayIcon->setIcon(QIcon(":/images/off"));
+  _trayIcon->setToolTip(QString("%1 %2").arg(applicationName()).arg(applicationVersion()));
+
+  QMetaObject::invokeMethod(_trayIcon, "show", Qt::QueuedConnection);
+}
+
+void Application::initTrayIcon()
+{
+  connect(this, SIGNAL(aboutToQuit()), _trayIcon, SLOT(hide()));
+  connect(_trayIcon, &QSystemTrayIcon::activated, this,
+    [] (QSystemTrayIcon::ActivationReason ar)
+      {
+        if (ar == QSystemTrayIcon::DoubleClick)
+        {
+
+        }
+      }
+  );
+
+  QMenu *mnuTrayIcon = new QMenu;
+  connect(_trayIcon, SIGNAL(destroyed()), mnuTrayIcon, SLOT(deleteLater()));
+
+  QAction *actPlay = new QAction(QIcon(":/images/control_play"), tr("Play"), this);
+  connect(actPlay, SIGNAL(triggered()), this, SLOT(play()));
+  mnuTrayIcon->addAction(actPlay);
+
+  QAction *actNextPhoto = new QAction(QIcon(":/images/move_all_right"), tr("Next photo"), this);
+  connect(actNextPhoto, SIGNAL(triggered()), this, SLOT(nextPhoto()));
+  mnuTrayIcon->addAction(actNextPhoto);
+
+  QAction *actSavePhoto = new QAction(QIcon(":/images/photo_save"), tr("Save photo"), this);
+  connect(actSavePhoto, SIGNAL(triggered()), this, SLOT(savePhoto()));
+  mnuTrayIcon->addAction(actSavePhoto);
+
+  QAction *actShowExifInfo = new QAction(QIcon(":/images/exif_info"), tr("Show EXIF info"), this);
+  connect(actShowExifInfo, SIGNAL(triggered()), this, SLOT(showExifInfo()));
+  mnuTrayIcon->addAction(actShowExifInfo);
+
+  QAction *actViewPhotoSource = new QAction(QIcon(":/images/source_url"), tr("View photo source"), this);
+  connect(actViewPhotoSource, SIGNAL(triggered()), this, SLOT(viewPhotoSource()));
+  mnuTrayIcon->addAction(actViewPhotoSource);
+
+  QAction *actShowHistory = new QAction(QIcon(":/images/history"), tr("Show history..."), this);
+  connect(actShowHistory, SIGNAL(triggered()), this, SLOT(showHistory()));
+  mnuTrayIcon->addAction(actShowHistory);
+
+  mnuTrayIcon->addSeparator();
+
+  QAction *actConfigure = new QAction(QIcon(":/images/configure"), tr("Settings..."), this);
+  connect(actConfigure, SIGNAL(triggered()), this, SLOT(configure()));
+  mnuTrayIcon->addAction(actConfigure);
+
+  mnuTrayIcon->addSeparator();
+
+  QAction *actShowAbout = new QAction(QIcon(":/images/about"), tr("About..."), this);
+  connect(actShowAbout, SIGNAL(triggered()), this, SLOT(showAbout()));
+  mnuTrayIcon->addAction(actShowAbout);
+
+  QAction *actQuit = new QAction(QIcon(":/images/quit"), tr("Quit"), this);
+  connect(actQuit, SIGNAL(triggered()), this, SLOT(quit()));
+  mnuTrayIcon->addAction(actQuit);
+
+  _trayIcon->setContextMenu(mnuTrayIcon);
+}
+
+void Application::play()
+{
+
+}
+
+void Application::nextPhoto()
+{
+
+}
+
+void Application::savePhoto()
+{
+
+}
+
+void Application::showExifInfo()
+{
+
+}
+
+void Application::viewPhotoSource()
+{
+
+}
+
+void Application::configure()
+{
+
+}
+
+void Application::showHistory()
+{
+
+}
+
+void Application::showAbout()
+{
+
 }
 
 QDir Application::dataDir()
@@ -56,6 +166,11 @@ QDir Application::dataDir()
   static QDir dataDir = createDataDir();
 
   return dataDir;
+}
+
+const QList< Engines::Base * > &Application::engines() const
+{
+  return _engines;
 }
 
 QDir Application::createDataDir()

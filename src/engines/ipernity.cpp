@@ -42,6 +42,11 @@ QString Engine::name() const
   return "Ipernity";
 }
 
+QPixmap Engine::icon() const
+{
+  return QPixmap();
+}
+
 void Engine::selectNext()
 {
   QUrlQuery urlQuery;

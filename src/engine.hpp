@@ -18,8 +18,11 @@
 
 #pragma once
 
+#include <QAbstractListModel>
 #include <QFileInfo>
+#include <QList>
 #include <QObject>
+#include <QPixmap>
 #include <QWidget>
 #include <QVariantMap>
 
@@ -45,7 +48,7 @@ namespace Wally
       Q_OBJECT
 
     public:
-      explicit SettingsWidget(QWidget *parent = nullptr);
+      explicit SettingsWidget(QWidget *pParent = nullptr);
 
     public slots:
       virtual void accept() = 0;
@@ -56,11 +59,12 @@ namespace Wally
       Q_OBJECT
 
     public:
-      explicit Base(QObject *parent = nullptr);
+      explicit Base(QObject *pParent = nullptr);
 
-      virtual SettingsWidget *settingsWidget(QWidget *parent) = 0;
+      virtual SettingsWidget *settingsWidget(QWidget *pParent) = 0;
 
       virtual QString name() const = 0;
+      virtual QPixmap icon() const = 0;
 
     signals:
       void pictureAvailable(const QFileInfo &pictureFileName, const QVariantMap &pictureInfo);
@@ -68,6 +72,22 @@ namespace Wally
 
     public slots:
       virtual void selectNext() = 0;
+    };
+
+    class Model : public QAbstractListModel
+    {
+      Q_OBJECT
+
+      QList< Base * > _engines;
+
+    public:
+      explicit Model(QList< Base * > lEngines, QObject *pParent = nullptr);
+
+      QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+      Qt::ItemFlags flags(const QModelIndex &index) const override;
+      QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+      QModelIndex parent(const QModelIndex &index) const override;
+      int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     };
   } // namespace Engines
 } // namespace Wally

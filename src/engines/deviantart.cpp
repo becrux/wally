@@ -20,6 +20,7 @@
 
 #include <QByteArray>
 #include <QFile>
+#include <QLabel>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -28,8 +29,8 @@
 
 using namespace Wally::Engines::DeviantArt;
 
-Engine::Engine(QObject *parent) :
-  ::Wally::Engines::Base(parent),
+Engine::Engine(QObject *pParent) :
+  ::Wally::Engines::Base(pParent),
   _networkAccessManager(new QNetworkAccessManager(this))
 {
 
@@ -38,6 +39,11 @@ Engine::Engine(QObject *parent) :
 QString Engine::name() const
 {
   return "DeviantArt";
+}
+
+QPixmap Engine::icon() const
+{
+  return QPixmap();
 }
 
 void Engine::selectNext()
@@ -161,13 +167,13 @@ void Engine::savePhoto()
   f.write(networkReply->readAll());
 }
 
-::Wally::Engines::SettingsWidget *Engine::settingsWidget(QWidget *parent)
+::Wally::Engines::SettingsWidget *Engine::settingsWidget(QWidget *pParent)
 {
-  return new SettingsWidget(parent);
+  return new SettingsWidget(pParent);
 }
 
-SettingsWidget::SettingsWidget(QWidget *parent) :
-  ::Wally::Engines::SettingsWidget(parent)
+SettingsWidget::SettingsWidget(QWidget *pParent) :
+  ::Wally::Engines::SettingsWidget(pParent)
 {
 }
 

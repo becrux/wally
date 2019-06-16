@@ -75,11 +75,12 @@ namespace Wally
         void updateStorage();
 
       public:
-        explicit Engine(QObject *parent = nullptr);
+        explicit Engine(QObject *pParent = nullptr);
 
         QString name() const override;
+        QPixmap icon() const override;
 
-        ::Wally::Engines::SettingsWidget *settingsWidget(QWidget *parent) override;
+        ::Wally::Engines::SettingsWidget *settingsWidget(QWidget *pParent) override;
 
       public slots:
         void selectNext() override;
@@ -88,7 +89,7 @@ namespace Wally
       class SettingsWidget : public ::Wally::Engines::SettingsWidget
       {
       public:
-        explicit SettingsWidget(QWidget *parent = nullptr);
+        explicit SettingsWidget(QWidget *pParent = nullptr);
 
         void accept() override;
       };

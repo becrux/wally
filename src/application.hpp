@@ -82,10 +82,26 @@ namespace Wally
 
     static QDir createDataDir();
 
+    void initTrayIcon();
+
+  private slots:
+    void play();
+    void nextPhoto();
+    void savePhoto();
+    void showExifInfo();
+    void viewPhotoSource();
+    void configure();
+    void showHistory();
+    void showAbout();
+
   public:
     explicit Application(int &argc, char **argv);
 
+    void init();
+
     static QDir dataDir();
+
+    const QList< Engines::Base * > &engines() const;
 
     DECL_PURE static QSettings &storage();
   };

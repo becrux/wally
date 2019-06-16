@@ -16,18 +16,65 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QLabel>
+
 #include "engine.hpp"
 
 using namespace Wally::Engines;
 
-Base::Base(QObject *parent) :
-  QObject(parent)
+Base::Base(QObject *pParent) :
+  QObject(pParent)
 {
 
 }
 
-SettingsWidget::SettingsWidget(QWidget *parent) :
-  QWidget(parent)
+SettingsWidget::SettingsWidget(QWidget *pParent) :
+  QWidget(pParent)
 {
 
+}
+
+Model::Model(QList< Base * > lEngines, QObject *pParent) :
+  QAbstractListModel(pParent),
+  _engines(lEngines)
+{
+
+}
+
+QVariant Model::data(const QModelIndex &cIndex, int iRole) const
+{
+  if ((cIndex.column() != 0) || (cIndex.row() < 0) || (cIndex.row() >= _engines.size()))
+    return QVariant();
+
+  switch (iRole)
+  {
+    case Qt::DisplayRole:
+      return _engines.at(cIndex.row())->name();
+
+    case Qt::DecorationRole:
+      return _engines.at(cIndex.row())->icon();
+
+    default:
+      return QVariant();
+  }
+}
+
+Qt::ItemFlags Model::flags(const QModelIndex &) const
+{
+  return Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsSelectable;
+}
+
+QModelIndex Model::index(int iRow, int iColumn, const QModelIndex &) const
+{
+  return createIndex(iRow, iColumn);
+}
+
+QModelIndex Model::parent(const QModelIndex &) const
+{
+  return QModelIndex();
+}
+
+int Model::rowCount(const QModelIndex &) const
+{
+  return _engines.size();
 }
