@@ -44,7 +44,7 @@ QString Engine::name() const
 
 QPixmap Engine::icon() const
 {
-  return QPixmap();
+  return QPixmap(":/images/ipernity");
 }
 
 void Engine::selectNext()

@@ -16,13 +16,25 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "application.hpp"
+#pragma once
 
-int main(int argc, char **argv)
+namespace Wally
 {
-  Wally::Application a(argc, argv);
-
-  a.init();
-
-  return a.exec();
-}
+  namespace Wallpaper
+  {
+    enum class Position
+    {
+      Centered = 0,
+      Tiled = 1,
+      CenterTiled = 2,
+      CenteredMaxpect = 3,
+      TiledMaxpect = 4,
+      Scaled = 5,
+      CenteredAutoFit = 6,
+      ScaleAndCrop = 7,
+      SymmetricalTiled = 8,
+      MirroredTiled = 9,
+      SymmetricalMirroredTiled = 10
+    };
+  } // namespace Wallpaper
+} // namespace Wally

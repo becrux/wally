@@ -50,7 +50,7 @@ QString Engine::name() const
 
 QPixmap Engine::icon() const
 {
-  return QPixmap();
+  return QPixmap(":/images/imgur");
 }
 
 void Engine::selectNext()

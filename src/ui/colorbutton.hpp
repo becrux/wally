@@ -16,13 +16,34 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "application.hpp"
+#pragma once
 
-int main(int argc, char **argv)
+#include <QColor>
+#include <QObject>
+#include <QPushButton>
+
+namespace Wally
 {
-  Wally::Application a(argc, argv);
+  namespace Ui
+  {
+    class ColorButton : public QPushButton
+    {
+      Q_OBJECT
 
-  a.init();
+      QColor _color;
 
-  return a.exec();
+    protected:
+      void paintEvent(QPaintEvent *event) override;
+      void nextCheckState() override;
+
+    public:
+      explicit ColorButton(QWidget *parent = nullptr);
+
+      QColor color() const;
+      void setColor(const QColor &color);
+
+    signals:
+      void colorChanged(const QColor &cNewColor);
+    };
+  }
 }

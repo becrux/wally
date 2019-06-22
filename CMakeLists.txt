@@ -29,7 +29,7 @@ set(wally_SRCS
   src/exif.cpp
   src/image.cpp
   src/main.cpp
-  src/settingswindow.cpp
+  src/settings.cpp
   src/trayicon.cpp
   src/utils.cpp
 
@@ -37,6 +37,9 @@ set(wally_SRCS
   src/engines/flickr.cpp
   src/engines/imgur.cpp
   src/engines/ipernity.cpp
+
+  src/ui/colorbutton.cpp
+  src/ui/positionbutton.cpp
 )
 
 if(OS2)

@@ -17,6 +17,7 @@
 */
 
 #include "application.hpp"
+#include "settings.hpp"
 #include "trayicon.hpp"
 
 #include "engines/flickr.hpp"
@@ -44,6 +45,7 @@ Application::Application(int &argc, char **argv) :
   setOrganizationName("BeCrux");
   setApplicationVersion(WALLY_VERSION);
 
+  setQuitOnLastWindowClosed(false);
   // QMetaObject::invokeMethod(_engines.at(3), "selectNext", Qt::QueuedConnection);
 }
 
@@ -148,7 +150,9 @@ void Application::viewPhotoSource()
 
 void Application::configure()
 {
+  QScopedPointer< Settings::Dialog > d(new Settings::Dialog(this));
 
+  d->exec();
 }
 
 void Application::showHistory()

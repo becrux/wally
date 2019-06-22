@@ -16,13 +16,32 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "application.hpp"
+#pragma once
 
-int main(int argc, char **argv)
+#include "defs.hpp"
+
+#include <QColor>
+#include <QObject>
+#include <QPushButton>
+
+namespace Wally
 {
-  Wally::Application a(argc, argv);
+  namespace Ui
+  {
+    class PositionButton : public QPushButton
+    {
+      Q_OBJECT
 
-  a.init();
+      ::Wally::Wallpaper::Position _position;
 
-  return a.exec();
+    public:
+      explicit PositionButton(QWidget *pParent = nullptr);
+
+      ::Wally::Wallpaper::Position position() const;
+      void setPosition(::Wally::Wallpaper::Position ePosition);
+
+    signals:
+      void positionChanged(::Wally::Wallpaper::Position eNewPosition);
+    };
+  }
 }
