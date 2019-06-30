@@ -2,15 +2,15 @@
 
 #include <QApplication>
 #include <QColorDialog>
-#include <QPainter>
 #include <QStyleOptionButton>
+#include <QStylePainter>
 
 using namespace Wally::Ui;
 
 ColorButton::ColorButton(QWidget *pParent) :
   QPushButton(pParent)
 {
-  // Just to calculate sizeHint
+  // for sizeHint only
   setText("Caption");
 }
 
@@ -29,17 +29,24 @@ QColor ColorButton::color() const
   return _color;
 }
 
-void ColorButton::paintEvent(QPaintEvent *event)
-{
-  QPushButton::paintEvent(event);
+//QSize ColorButton::sizeHint() const
+//{
+//  return QSize(80, 20);
+//}
 
-  QPainter painter(this);
+void ColorButton::paintEvent(QPaintEvent * /*event*/)
+{
+  // QPushButton::paintEvent(event);
+
+  QStylePainter painter(this);
   painter.setRenderHint(QPainter::Antialiasing, true);
 
   QStyleOptionButton option;
 
   option.initFrom(this);
   option.text.clear();
+
+  painter.drawControl(QStyle::CE_PushButton, option);
 
   QRect rect = QApplication::style()->subElementRect(QStyle::SE_PushButtonContents, &option, this);
 

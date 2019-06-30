@@ -19,6 +19,7 @@
 #include "positionbutton.hpp"
 
 #include <QAbstractTableModel>
+#include <QApplication>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QHeaderView>
@@ -175,23 +176,21 @@ namespace
 
     }
 
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
+    void paint(QPainter *painter, const QStyleOptionViewItem &cOption, const QModelIndex &cIndex) const override
     {
       painter->setRenderHint(QPainter::Antialiasing, true);
       painter->fillRect(
-        option.rect,
-        (option.state & QStyle::State_Selected)?
-          option.palette.brush(QPalette::Highlight) :
-          option.palette.brush(QPalette::Base)
+        cOption.rect,
+        (cOption.state & QStyle::State_Selected)?
+          cOption.palette.brush(QPalette::Highlight) :
+          cOption.palette.brush(QPalette::Base)
       );
-      painter->drawPixmap(option.rect.topLeft() + QPoint(2, 2), QPixmap(index.data().toString()));
+      painter->drawPixmap(cOption.rect.topLeft() + QPoint(2, 2), QPixmap(cIndex.data().toString()));
     }
 
-    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const override
+    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &cIndex) const override
     {
-      static QSize pixmapSize = QImageReader(":/images/centered_maxpect").size() + QSize(5, 5);
-
-      return pixmapSize;
+      return QImageReader(cIndex.data().toString()).size() + QSize(5, 5);
     }
   };
 
@@ -204,11 +203,55 @@ namespace
 
     }
 
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
+    void paint(QPainter *painter, const QStyleOptionViewItem &cOption, const QModelIndex &cIndex) const override
     {
-      QStyleOptionViewItem itemOption(option);
+      QStyleOptionViewItem itemOption(cOption);
       itemOption.state = itemOption.state & ~QStyle::State_HasFocus;
-      QStyledItemDelegate::paint(painter, itemOption, index);
+      QStyledItemDelegate::paint(painter, itemOption, cIndex);
+    }
+
+    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &cIndex) const override
+    {
+      return QFontMetrics(QApplication::font()).size(Qt::TextSingleLine, cIndex.data().toString());
+    }
+  };
+
+  class View : public QTableView
+  {
+  protected:
+    void resizeEvent(QResizeEvent *pEvent) override
+    {
+      QTableView::resizeEvent(pEvent);
+      resizeRowsToContents();
+      resizeColumnsToContents();
+    }
+
+  public:
+    explicit View(::Wally::Wallpaper::Position eInitialPosition, QWidget *pParent = nullptr) :
+      QTableView(pParent)
+    {
+      Model *model = new Model(this);
+      QItemSelectionModel *selectionModel = new QItemSelectionModel(model, this);
+
+      setModel(model);
+      setItemDelegateForColumn(0, new LabelItemDelegate);
+      setItemDelegateForColumn(1, new PixmapItemDelegate);
+      setSelectionBehavior(QAbstractItemView::SelectRows);
+      setSelectionMode(QAbstractItemView::SingleSelection);
+      setSelectionModel(selectionModel);
+      verticalHeader()->setVisible(false);
+      setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+      setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+      setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+      selectionModel->select(model->index(static_cast< int >(eInitialPosition), 0),
+                             QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+      scrollTo(model->index(static_cast< int >(eInitialPosition), 0));
+    }
+
+    ::Wally::Wallpaper::Position position() const
+    {
+      return static_cast< Wally::Wallpaper::Position >(selectionModel()->currentIndex().row());
     }
   };
 }
@@ -227,41 +270,24 @@ PositionButton::PositionButton(QWidget *pParent) :
         QScopedPointer< QDialog > d(new QDialog(this));
         QDialog *dPtr = d.data();
 
-        Model *model = new Model(dPtr);
-        QTableView *view = new QTableView(dPtr);
-        QItemSelectionModel *selectionModel = new QItemSelectionModel(model, dPtr);
-
         dPtr->setWindowTitle(tr("Set position"));
 
         QVBoxLayout *layout = new QVBoxLayout;
+
+        View *view = new View(position(), dPtr);
+        layout->addWidget(view);
+
         QDialogButtonBox *dialogButtons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                                                                Qt::Horizontal, dPtr);
         connect(dialogButtons, SIGNAL(accepted()), dPtr, SLOT(accept()));
         connect(dialogButtons, SIGNAL(rejected()), dPtr, SLOT(reject()));
 
-        view->setModel(model);
-        view->setItemDelegateForColumn(0, new LabelItemDelegate);
-        view->setItemDelegateForColumn(1, new PixmapItemDelegate);
-        view->setSelectionBehavior(QAbstractItemView::SelectRows);
-        view->setSelectionMode(QAbstractItemView::SingleSelection);
-        view->setSelectionModel(selectionModel);
-        view->verticalHeader()->setVisible(false);
-        view->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-        view->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-        view->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
-        layout->addWidget(view);
         layout->addWidget(dialogButtons);
         dPtr->setLayout(layout);
         dPtr->resize(700, 500);
-        connect(dPtr, SIGNAL(executed()), view, SLOT(resizeColumnsToContents()));
-        connect(dPtr, SIGNAL(executed()), view, SLOT(resizeRowsToContents()));
 
-        selectionModel->select(model->index(static_cast< int >(position()), 0),
-                               QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
-        view->scrollTo(model->index(static_cast< int >(position()), 0));
         if (dPtr->exec() == QDialog::Accepted)
-          setPosition(static_cast< Wally::Wallpaper::Position >(selectionModel->currentIndex().row()));
+          setPosition(view->position());
       }
   );
 }

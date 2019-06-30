@@ -42,6 +42,8 @@ namespace Wally
       QColor color() const;
       void setColor(const QColor &color);
 
+      // QSize sizeHint() const override;
+
     signals:
       void colorChanged(const QColor &cNewColor);
     };

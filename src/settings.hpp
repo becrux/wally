@@ -23,8 +23,11 @@
 #include <QListView>
 #include <QStyledItemDelegate>
 
+class QCheckBox;
 class QComboBox;
+class QLineEdit;
 class QPainter;
+class QRadioButton;
 class QSpinBox;
 class QStackedLayout;
 
@@ -33,6 +36,7 @@ namespace Wally
   namespace Ui
   {
     class ColorButton;
+    class PositionButton;
   } // namespace Wally;
 
   class Application;
@@ -83,10 +87,26 @@ namespace Wally
 
     class GeneralWidget : public QWidget
     {
-      QSpinBox *_sbTime;
-      QComboBox *_cbxTimeUnits;
-      Ui::ColorButton *_clbBackground;
-      QPushButton *_pbPosition;
+      QCheckBox *_cbRandomOrder;
+      QCheckBox *_cbSwitchOnPlay;
+      QCheckBox *_cbPlayOnStart;
+      QCheckBox *_cbStartOnLogon;
+      QCheckBox *_cbOnlyLandscapePhotos;
+      QCheckBox *_cbRotateUsingEXIF;
+      QComboBox *_cbxInfoPhotoCorner;
+      QCheckBox *_cbInfoInSysTray;
+      QCheckBox *_cbUseFullDesktopArea;
+      QComboBox *_cbxPhotoMinimumAllowedSize;
+      QSpinBox *_sbMinimimumDiskQuota;
+      QComboBox *_cbxMinimumDiskQuotaUnits;
+      QSpinBox *_sbHistoryLength;
+      QComboBox *_cbxHistoryLengthUnits;
+
+      QComboBox *_cbxProxyType;
+      QLineEdit *_leProxyServer;
+      QSpinBox *_sbProxyPort;
+      QLineEdit *_leProxyUsername;
+      QLineEdit *_leProxyPassword;
 
     public:
       explicit GeneralWidget(QWidget *pParent = nullptr);
@@ -95,6 +115,11 @@ namespace Wally
     class Dialog : public QDialog
     {
       Q_OBJECT
+
+      QSpinBox *_sbTime;
+      QComboBox *_cbxTimeUnits;
+      Ui::ColorButton *_clbBackground;
+      Ui::PositionButton *_pbPosition;
 
     public:
       explicit Dialog(const Application *pApp, QWidget *pParent = nullptr);

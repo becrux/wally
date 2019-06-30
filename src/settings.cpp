@@ -20,14 +20,18 @@
 #include "engine.hpp"
 #include "settings.hpp"
 #include "ui/colorbutton.hpp"
+#include "ui/positionbutton.hpp"
 
+#include <QCheckBox>
 #include <QComboBox>
+#include <QDialogButtonBox>
 #include <QFontMetrics>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QImageReader>
 #include <QItemSelectionModel>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPainter>
 #include <QSpinBox>
 #include <QStackedLayout>
@@ -136,33 +140,70 @@ QSize Toolbar::View::sizeHint() const
 
 GeneralWidget::GeneralWidget(QWidget *pParent) :
   QWidget(pParent),
-  _sbTime(new QSpinBox(this)),
-  _cbxTimeUnits(new QComboBox(this)),
-  _clbBackground(new Ui::ColorButton(this)),
-  _pbPosition(new QPushButton(this))
+  _cbRandomOrder(new QCheckBox(tr("Choose in random order"), this)),
+  _cbSwitchOnPlay(new QCheckBox(tr("Switch photo on play"), this)),
+  _cbPlayOnStart(new QCheckBox(tr("Play on application start"), this)),
+  _cbStartOnLogon(new QCheckBox(tr("Start at system logon"), this)),
+  _cbOnlyLandscapePhotos(new QCheckBox(tr("Only use landscape photos"), this)),
+  _cbRotateUsingEXIF(new QCheckBox(tr("Rotate photos according to EXIF"), this)),
+  _cbxInfoPhotoCorner(new QComboBox(this)),
+  _cbInfoInSysTray(new QCheckBox(tr("View info in system tray tooltip"), this)),
+  _cbUseFullDesktopArea(new QCheckBox(tr("Use full desktop area"), this)),
+  _cbxPhotoMinimumAllowedSize(new QComboBox(this)),
+  _sbMinimimumDiskQuota(new QSpinBox(this)),
+  _cbxMinimumDiskQuotaUnits(new QComboBox(this)),
+  _sbHistoryLength(new QSpinBox(this)),
+  _cbxHistoryLengthUnits(new QComboBox(this)),
+  _cbxProxyType(new QComboBox(this)),
+  _leProxyServer(new QLineEdit(this)),
+  _sbProxyPort(new QSpinBox(this)),
+  _leProxyUsername(new QLineEdit(this)),
+  _leProxyPassword(new QLineEdit(this))
 {
   QVBoxLayout *mainLayout = new QVBoxLayout;
 
-  QGroupBox *gbGeneral = new QGroupBox(tr("General"), this);
+  mainLayout->addWidget(_cbRandomOrder);
+  mainLayout->addWidget(_cbSwitchOnPlay);
+  mainLayout->addWidget(_cbPlayOnStart);
+  mainLayout->addWidget(_cbStartOnLogon);
+  mainLayout->addWidget(_cbOnlyLandscapePhotos);
+  mainLayout->addWidget(_cbRotateUsingEXIF);
 
-  QGridLayout *generalLayout = new QGridLayout;
+  QHBoxLayout *ipcLayout = new QHBoxLayout;
+  ipcLayout->addWidget(new QLabel(tr("View info at:"), this));
+  ipcLayout->addWidget(_cbxInfoPhotoCorner);
+  _cbxInfoPhotoCorner->addItem(tr("No corner"));
+  _cbxInfoPhotoCorner->addItem(tr("Top left"));
+  _cbxInfoPhotoCorner->addItem(tr("Top right"));
+  _cbxInfoPhotoCorner->addItem(tr("Bottom left"));
+  _cbxInfoPhotoCorner->addItem(tr("Bottom right"));
+  mainLayout->addLayout(ipcLayout);
 
-  generalLayout->addWidget(new QLabel(tr("Interval:"), this), 0, 0, 1, 2);
-  generalLayout->addWidget(new QLabel(tr("Border:"), this), 0, 2);
-  generalLayout->addWidget(new QLabel(tr("Position:"), this), 0, 3);
+  mainLayout->addWidget(_cbInfoInSysTray);
+  mainLayout->addWidget(_cbUseFullDesktopArea);
 
-  generalLayout->addWidget(_sbTime, 1, 0);
-  generalLayout->addWidget(_cbxTimeUnits, 1, 1);
-  generalLayout->addWidget(_clbBackground, 1, 2);
-
-  gbGeneral->setLayout(generalLayout);
+  QHBoxLayout *masLayout = new QHBoxLayout;
+  masLayout->addWidget(new QLabel(tr("Photo has to be"), this));
+  masLayout->addWidget(_cbxPhotoMinimumAllowedSize);
+  masLayout->addWidget(new QLabel(tr("size of the desktop"), this));
+  _cbxPhotoMinimumAllowedSize->addItem(tr("independent of"));
+  _cbxPhotoMinimumAllowedSize->addItem(tr("at least 1/2 of"));
+  _cbxPhotoMinimumAllowedSize->addItem(tr("at least 3/4 of"));
+  _cbxPhotoMinimumAllowedSize->addItem(tr("bigger than"));
+  mainLayout->addLayout(masLayout);
 
   setLayout(mainLayout);
 }
 
 Dialog::Dialog(const Application *pApp, QWidget *pParent) :
-  QDialog(pParent)
+  QDialog(pParent),
+  _sbTime(new QSpinBox(this)),
+  _cbxTimeUnits(new QComboBox(this)),
+  _clbBackground(new Ui::ColorButton(this)),
+  _pbPosition(new Ui::PositionButton(this))
 {
+  QVBoxLayout *dialogLayout = new QVBoxLayout;
+
   QHBoxLayout *mainLayout = new QHBoxLayout;
 
   QAbstractItemView *view = new Toolbar::View(this);
@@ -181,6 +222,27 @@ Dialog::Dialog(const Application *pApp, QWidget *pParent) :
   QGroupBox *gbGeneral = new QGroupBox(this);
   gbGeneral->setTitle(tr("General"));
   rightLayout->addWidget(gbGeneral);
+
+  QGridLayout *generalLayout = new QGridLayout;
+  generalLayout->setColumnStretch(2, 1);
+  generalLayout->setColumnStretch(4, 1);
+
+  generalLayout->addWidget(new QLabel(tr("Interval:"), this), 0, 0, 1, 2);
+  generalLayout->addWidget(new QLabel(tr("Border:"), this), 0, 3);
+  generalLayout->addWidget(new QLabel(tr("Position:"), this), 0, 5);
+
+  generalLayout->addWidget(_sbTime, 1, 0);
+  generalLayout->addWidget(_cbxTimeUnits, 1, 1);
+  generalLayout->addWidget(_clbBackground, 1, 3);
+  generalLayout->addWidget(_pbPosition, 1, 5);
+
+  _cbxTimeUnits->addItem(tr("Seconds"), 1);
+  _cbxTimeUnits->addItem(tr("Minutes"), 60);
+  _cbxTimeUnits->addItem(tr("Hours"), 3600);
+  _cbxTimeUnits->addItem(tr("Days"), 86400);
+  _cbxTimeUnits->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+
+  gbGeneral->setLayout(generalLayout);
 
   QGroupBox *gbEngines = new QGroupBox(this);
   gbEngines->setTitle(tr("Engines"));
@@ -208,5 +270,14 @@ Dialog::Dialog(const Application *pApp, QWidget *pParent) :
 
   mainLayout->addLayout(rightLayout);
 
-  setLayout(mainLayout);
+  dialogLayout->addLayout(mainLayout);
+
+  QDialogButtonBox *dialogButtons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                                                         Qt::Horizontal, this);
+  connect(dialogButtons, SIGNAL(accepted()), this, SLOT(accept()));
+  connect(dialogButtons, SIGNAL(rejected()), this, SLOT(reject()));
+
+  dialogLayout->addWidget(dialogButtons);
+
+  setLayout(dialogLayout);
 }
